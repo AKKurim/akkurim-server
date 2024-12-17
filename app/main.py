@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+import asyncio
 
 from fastapi import Depends, FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -38,3 +38,11 @@ app.include_router(remote_config.router)
 @app.get("/")
 def read_root():
     return {"Status": "Working", "App": settings.APP_NAME}
+
+
+# for testing purposes
+@app.post("/fake-sync-endpoint")
+async def fake_sync_endpoint():
+    # simulate fake data processing by sleeping for 0.5 seconds
+    await asyncio.sleep(0.5)
+    return {"message": "Synced"}
