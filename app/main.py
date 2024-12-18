@@ -8,7 +8,7 @@ from supertokens_python.framework.fastapi import get_middleware
 from supertokens_python.recipe.session import SessionContainer
 from supertokens_python.recipe.session.framework.fastapi import verify_session
 
-from app.api.v1 import admin, guardian, remote_config
+from app.api.v1 import admin, guardian, remote_config, sse
 from app.auth.supertokens_config import supertokens_init
 from app.config import settings
 from app.db.database import lifespan
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(admin.router)
 app.include_router(guardian.router)
 app.include_router(remote_config.router)
+app.include_router(sse.router)
 
 
 @app.middleware("http")
