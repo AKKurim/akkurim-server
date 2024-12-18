@@ -21,9 +21,9 @@ async def sse_endpoint():
             # Simulate a real-time update
             await asyncio.sleep(5)
             if events:
-                yield f"data: {events.pop(0)}\n\n"
+                yield f"{events.pop(0)}\n\n"
             else:
-                yield f"data: No new events\n\n"
+                yield f"No new events\n\n"
 
     return EventSourceResponse(event_generator())
 
