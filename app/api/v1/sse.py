@@ -2,7 +2,7 @@ import asyncio
 import time
 
 from fastapi import APIRouter, Request, Response
-from fastapi.responses import StreamingResponse
+from sse_starlette.sse import EventSourceResponse
 
 router = APIRouter(
     prefix="/v1",
@@ -25,7 +25,7 @@ async def sse_endpoint():
             else:
                 yield f"data: No new events\n\n"
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")
+    return EventSourceResponse(event_generator())
 
 
 @router.post("/add-event")
