@@ -1,6 +1,6 @@
 import asyncio
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 from supertokens_python import get_all_cors_headers
 from supertokens_python.framework.fastapi import get_middleware
@@ -33,6 +33,13 @@ app.add_middleware(
 app.include_router(admin.router)
 app.include_router(guardian.router)
 app.include_router(remote_config.router)
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Process-Time"] = str(response.elapsed.total_seconds())
+    return response
 
 
 @app.get("/")
