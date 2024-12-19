@@ -1,5 +1,6 @@
 import asyncio
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
@@ -11,7 +12,20 @@ from supertokens_python.recipe.session.framework.fastapi import verify_session
 from app.api.v1 import admin, guardian, remote_config, sse
 from app.auth.supertokens_config import supertokens_init
 from app.config import settings
-from app.db.database import lifespan
+from app.db.database import db
+from app.utils.broadcast import broadcast
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        await db.connect()
+        await broadcast.connect()
+        yield
+    finally:
+        await db.disconnect()
+        await broadcast.disconnect()
+
 
 supertokens_init()
 app = FastAPI(

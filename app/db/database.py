@@ -24,15 +24,6 @@ class Database:
 db = Database()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        await db.connect()
-        yield
-    finally:
-        await db.disconnect()
-
-
 async def get_db():
     async with db.pool.acquire() as connection:
         yield connection

@@ -7,3 +7,4 @@ pydantic-settings
 pydantic[email]
 pytest
 sse-starlette
+broadcaster
