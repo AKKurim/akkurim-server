@@ -32,4 +32,7 @@ async def sse_endpoint():
 
 @router.post("/add-event")
 async def add_event():
-    broadcast.publish(channel="updates", message="New event at " + str(time.time()))
+    await broadcast.publish(
+        channel="updates", message="New event at " + str(time.time())
+    )
+    return Response(status_code=200)
