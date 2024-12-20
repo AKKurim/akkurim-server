@@ -6,7 +6,6 @@ services:
     image: akkurim-server-dev
     container_name: akkurim-server-dev
     restart: always
-    user: root
     ports:
       - "8002:8000"
     networks:
@@ -36,7 +35,6 @@ services:
     networks:
       - akkurim_network_dev
     restart: unless-stopped
-    user: root
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', '${DB_USER}', '-d', '${DB_NAME}']
       interval: 5s
@@ -56,7 +54,6 @@ services:
     networks:
       - akkurim_network_dev
     restart: unless-stopped
-    user: root
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', '${DB_SUPERTOKENS_USER}', '-d', '${DB_SUPERTOKENS_NAME}']
       interval: 5s
@@ -75,7 +72,6 @@ services:
     networks:
       - akkurim_network_dev
     restart: unless-stopped
-    user: root
     healthcheck:
       test: >
         bash -c 'exec 3<>/dev/tcp/127.0.0.1/3567 && echo -e "GET /hello HTTP/1.1\r\nhost: 127.0.0.1:3567\r\nConnection: close\r\n\r\n" >&3 && cat <&3 | grep "Hello"'
