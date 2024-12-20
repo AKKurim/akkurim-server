@@ -7,4 +7,4 @@ class SSEEvent(BaseModel):
     action: str
     table_name: str
     object_id: int | UUID1
-    object_data: dict[str, Any]
+    object_data: dict
