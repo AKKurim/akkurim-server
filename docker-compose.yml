@@ -83,10 +83,3 @@ networks:
   akkurim_network_dev:
     driver: bridge
 
-volumes:
-  postgres_data_dev:
-  postgres_auth_dev:
-  caddy_data:
-  caddy_config:
-
-
