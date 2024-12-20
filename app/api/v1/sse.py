@@ -1,4 +1,5 @@
 import asyncio
+import json
 import time
 
 from fastapi import APIRouter, Request, Response
@@ -31,6 +32,7 @@ async def sse_endpoint():
     return EventSourceResponse(event_generator())
 
 
+# convert the message to an json string
 @router.post("/add-event")
 async def add_event():
     """Sample endpoint to add an event to the SSE stream
@@ -39,13 +41,14 @@ async def add_event():
     Returns:
         _type_: _description_
     """
+    message = SSEEvent(
+        action="insert",
+        table_name="guardian",
+        object_id=1,
+        object_data={"first_name": "John", "last_name": "Doe"},
+    )
     await broadcast.publish(
         channel="updates",
-        message=SSEEvent(
-            action="insert",
-            table_name="users",
-            object_id=1,
-            object_data={"name": "John"},
-        ),
+        message=json.dumps(message.model_dump()),
     )
     return Response(status_code=200)
