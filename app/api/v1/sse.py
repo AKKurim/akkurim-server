@@ -26,7 +26,7 @@ async def event_generator():
 
 
 # Simulated data stream for SSE
-@router.get("/sse", response_class=EventSourceResponse)
+@router.get("/sse")
 async def sse_endpoint():
     return EventSourceResponse(event_generator())
 
