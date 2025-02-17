@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS public.remote_config
     PRIMARY KEY (id)
 );
 
+CREATE Schema IF NOT EXISTS tenant_id;
+
 CREATE TABLE IF NOT EXISTS tenant_id.school_year
 (
     id uuid NOT NULL,
@@ -31,8 +33,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.school_year
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE Schema IF NOT EXISTS tenant_id;
 
 CREATE TABLE IF NOT EXISTS tenant_id.athlete_status
 (
@@ -362,6 +362,8 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_sign_up_form
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+/* Foreign keys */
 
 ALTER TABLE IF EXISTS tenant_id.item
     ADD FOREIGN KEY (item_type_id)

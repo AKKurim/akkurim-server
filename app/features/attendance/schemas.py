@@ -145,3 +145,13 @@ class TrainingTimeUpdatePublic(TrainingTimeUpdate):
 class TrainingTimeRead(TrainingTimeBase):
     updated_at: AwareDatetime
     created_at: AwareDatetime
+
+
+class TrainingTimeReadPublic(TrainingTimeRead):
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                generate_example_values(TrainingTimeRead),
+            ],
+        }
+    }
