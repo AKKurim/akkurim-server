@@ -7,7 +7,7 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 
 class RemoteConfigBase(BaseSchema):
     id: int
-    welcome_message: Optional[str]
+    urgent_message: Optional[str]
     minimum_app_version: str
 
 
