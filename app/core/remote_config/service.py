@@ -16,4 +16,4 @@ class RemoteConfigService:
     async def get_remote_config(
         self, tenant_id: str, db: Connection
     ) -> RemoteConfigRead:
-        return await self.default_service.get_object_by_id(tenant_id, db)
+        return await self.default_service.get_object_by_id(tenant_id, 0, db)
