@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from pydantic import UUID1, AwareDatetime
 
@@ -93,9 +93,13 @@ async def update_athlete(
     db: db_dep,
     service: service_dep,
 ) -> AthleteReadPublic:
+    if athlete_id != athlete.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Guardian ID in URL and body does not match",
+        )
     updated_athlete = await service.update_athlete(
         auth_data.tenant_id,
-        athlete_id,
         athlete.model_dump(),
         db,
     )
