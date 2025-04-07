@@ -3,6 +3,7 @@ from typing import Optional
 
 import orjson
 from asyncpg import Connection, ForeignKeyViolationError, UniqueViolationError
+from core.logging import logger
 from pydantic import UUID1
 
 from app.core.shared.base_schema import BaseSchema
@@ -130,7 +131,8 @@ class DefaultService:
         if not result:
             raise NotFoundError(self.table, data["id"])
 
-        if result["updated_at"] > datetime.fromisoformat(data["updated_at"]):
+        logger.log(result["updated_at"], data["updated_at"])
+        if result["updated_at"] > data["updated_at"]:
             raise AlreadyUpdatedError(self.table, data["id"])
 
         result["updated_at"] = datetime.now()
