@@ -131,7 +131,7 @@ class DefaultService:
         if not result:
             raise NotFoundError(self.table, data["id"])
 
-        logger.log(result["updated_at"], data["updated_at"])
+        logger.info(result["updated_at"], data["updated_at"])
         if result["updated_at"] > data["updated_at"]:
             raise AlreadyUpdatedError(self.table, data["id"])
 
