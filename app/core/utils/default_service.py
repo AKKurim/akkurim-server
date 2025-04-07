@@ -3,9 +3,9 @@ from typing import Optional
 
 import orjson
 from asyncpg import Connection, ForeignKeyViolationError, UniqueViolationError
-from core.logging import logger
 from pydantic import UUID1
 
+from app.core.logging import logger
 from app.core.shared.base_schema import BaseSchema
 from app.core.shared.exceptions import (
     AlreadyExistsError,
