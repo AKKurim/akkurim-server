@@ -65,7 +65,7 @@ class DefaultService:
     async def get_object_by_id(
         self,
         tenant_id: str,
-        id: UUID1,
+        id: UUID1 | str | int,
         db: Connection,
     ) -> dict | None:
         query, values = generate_sql_read(
