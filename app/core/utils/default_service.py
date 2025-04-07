@@ -130,12 +130,10 @@ class DefaultService:
         if not result:
             raise NotFoundError(self.table, data["id"])
 
-        if datetime.fromisoformat(result["updated_at"]) > datetime.fromisoformat(
-            data["updated_at"]
-        ):
+        if result["updated_at"] > datetime.fromisoformat(data["updated_at"]):
             raise AlreadyUpdatedError(self.table, data["id"])
-        result["updated_at"] = datetime.now()
 
+        result["updated_at"] = datetime.now()
         query, values = generate_sql_update_with_returning(
             tenant_id,
             self.table,
