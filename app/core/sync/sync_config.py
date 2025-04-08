@@ -1,4 +1,4 @@
-from app.core.remote_config.schemas import RemoteConfigReadPublic
+from app.core.remote_config.schemas import ClubReadPublic, RemoteConfigReadPublic
 from app.core.shared.join_tables import (
     AthleteGuardainReadPublic,
     AthleteMeetEventReadPublic,
@@ -34,7 +34,7 @@ from app.features.web_management.schemas import WebPostReadPublic
 
 TABLE_NAMES = {
     # "table_name": Schema
-    # "club is not synced"
+    "club": ClubReadPublic,
     "remote_config": RemoteConfigReadPublic,
     "school_year": SchoolYearReadPublic,
     "athlete": AthleteReadPublic,

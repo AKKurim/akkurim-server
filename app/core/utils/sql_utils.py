@@ -37,6 +37,9 @@ def generate_sql_read(
     columns: list[str],
     conditions: dict[str, dict] = {},
 ) -> tuple[str, tuple]:
+    if table == "club":
+        tenant_id = "public"
+
     columns = ", ".join(columns)
     conditions_str = " AND ".join(
         [
