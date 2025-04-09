@@ -39,6 +39,8 @@ def generate_sql_read(
 ) -> tuple[str, tuple]:
     if table == "club":
         tenant_id = "public"
+    if table == "remote_config":
+        tenant_id = "public"
 
     columns = ", ".join(columns)
     conditions_str = " AND ".join(

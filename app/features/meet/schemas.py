@@ -61,8 +61,6 @@ class DisciplineTypeBase(BaseSchema):
     id: int
     name: str
     description: Optional[str]
-    name_en: Optional[str]
-    description_en: Optional[str]
 
 
 class DisciplineTypeCreate(DisciplineTypeBase):
