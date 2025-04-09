@@ -42,7 +42,7 @@ class DefaultService:
             tenant=tenant,
             table_name=self.table,
             endpoint=self.broadcast_endpoint,
-            id=id,
+            id=str(id),
             local_action=LocalActionEnum.upsert,
         )
         await self.broadcast.publish(
@@ -55,7 +55,7 @@ class DefaultService:
             tenant=tenant,
             table_name=self.table,
             endpoint=None,
-            id=id,
+            id=str(id),
             local_action=LocalActionEnum.delete,
         )
         await self.broadcast.publish(

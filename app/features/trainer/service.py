@@ -116,7 +116,7 @@ class TrainerService(DefaultService):
             table_name="trainer_status",
             endpoint="/trainer/status/",  # update all statuses since it we dont have a specific endpoint
             local_action=LocalActionEnum.upsert,
-            id=res["id"],
+            id=str(res["id"]),
         )
         await global_broadcast.publish(
             channel="update",

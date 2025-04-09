@@ -123,7 +123,7 @@ class AthleteService(DefaultService):
             table_name="athlete_status",
             endpoint="/athlete/status/",  # update all statuses since it we dont have a specific endpoint
             local_action=LocalActionEnum.upsert,
-            id=res["id"],
+            id=str(res["id"]),
         )
         await global_broadcast.publish(
             channel="update",
