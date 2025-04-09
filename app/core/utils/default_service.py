@@ -169,7 +169,7 @@ class DefaultService:
             {"id": id},
         )
         await db.execute(query, *values)
-        await self.notify_delete(tenant_id)
+        await self.notify_delete(tenant_id, id)
         return None
 
     async def get_all_objects(

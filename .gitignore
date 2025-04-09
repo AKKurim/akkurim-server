@@ -8,3 +8,4 @@ htmlcov
 .venv
 test_file.py
 .env
+data/*.xlsx
