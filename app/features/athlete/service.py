@@ -116,7 +116,7 @@ class AthleteService(DefaultService):
             status,
             AthleteStatusRead.model_fields.keys(),
         )
-        res = db.fetchrow(query, *values)
+        res = await db.fetchrow(query, *values)
 
         event = SSEEvent(
             tenant_id=tenant_id,
