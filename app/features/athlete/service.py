@@ -119,7 +119,7 @@ class AthleteService(DefaultService):
         res = await db.fetchrow(query, *values)
 
         event = SSEEvent(
-            tenant_id=tenant_id,
+            tenant=tenant_id,
             table_name="athlete_status",
             endpoint="/athlete/status/",  # update all statuses since it we dont have a specific endpoint
             local_action=LocalActionEnum.upsert,
