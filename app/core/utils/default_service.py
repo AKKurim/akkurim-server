@@ -119,7 +119,7 @@ class DefaultService:
         except UniqueViolationError:
             raise UniqueViolationErrorHTTP(self.table, data["id"], data["email"])
         except ForeignKeyViolationError:
-            raise ForeignKeyViolationErrorHTTP(self.table, data["id"])
+            raise ForeignKeyViolationErrorHTTP(self.table, data["id"], "TODO")
 
     async def update_object(
         self,
