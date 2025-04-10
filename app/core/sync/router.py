@@ -38,11 +38,17 @@ service_dep = Annotated[SyncService, Depends(SyncService)]
     "/tables/",
     response_model=list[str],
 )
-def get_tables_to_sync(
+async def get_tables_to_sync(
+    from_date: AwareDatetime,
     auth_data: trainer_dep,
+    db: db_dep,
     service: service_dep,
 ) -> list[str]:
-    return service.get_tables_to_sync()
+    return await service.get_tables_to_sync(
+        auth_data.tenant_id,
+        from_date,
+        db,
+    )
 
 
 @router.get(

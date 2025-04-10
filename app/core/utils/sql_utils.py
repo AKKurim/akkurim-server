@@ -143,6 +143,18 @@ def generate_sql_delete_with_returning(
     )
 
 
+def generate_sql_tables_updated_after(
+    tenant_id: str,
+    table_names: list[str],
+) -> str:
+    return "UNION ALL ".join(
+        [
+            f"(SELECT '{table_name}' as table_name FROM {tenant_id if table_name != 'club' and table_name != 'remote_config' else 'public'}.{table_name} WHERE updated_at > $1 LIMIT 1)"
+            for table_name in table_names
+        ]
+    )
+
+
 def convert_uuid_to_str(data: dict) -> dict:
     for key, value in data.items():
         print(key, value)
