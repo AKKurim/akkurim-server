@@ -77,7 +77,7 @@ async def get_objects_to_sync(
 )
 async def post_objects_to_sync(
     table_name: str,
-    data: list[dict],
+    data: dict[str, list[dict]],
     auth_data: trainer_dep,
     db: db_dep,
     service: service_dep,
@@ -85,7 +85,7 @@ async def post_objects_to_sync(
     await service.sync_objects(
         auth_data.tenant_id,
         table_name,
-        data,
+        data["data"],
         db,
     )
     return ORJSONResponse(
