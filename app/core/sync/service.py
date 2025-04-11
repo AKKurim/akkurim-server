@@ -5,6 +5,7 @@ from app.core.shared.base_schema import BaseSchema
 from app.core.sync.sync_config import TABLE_NAMES
 from app.core.utils.sql_utils import (
     convert_uuid_to_str,
+    generate_sql_insert,
     generate_sql_read,
     generate_sql_tables_updated_after,
 )
@@ -57,3 +58,34 @@ class SyncService:
         )
         res = await db.fetch(query, *values)
         return [convert_uuid_to_str(dict(r)) for r in res]
+
+    async def sync_objects(
+        self,
+        tenant_id: str,
+        table_name: str,
+        data: list[BaseSchema],
+        db: Connection,
+    ) -> None:
+        try:
+            schema: BaseSchema = TABLE_NAMES[table_name]
+        except KeyError:
+            raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
+
+        async for d in data:
+            d = schema(**d.dict())
+            d = d.dict(exclude_unset=True)
+            query, values = generate_sql_insert(
+                tenant_id=tenant_id,
+                table=table_name,
+                data=d,
+                columns=schema.model_fields.keys(),
+            )
+            query += " ON CONFLICT (id) DO UPDATE SET "
+            query += ", ".join(
+                f"{col} = EXCLUDED.{col}"
+                for col in schema.model_fields.keys()
+                if col != "id"
+            )
+            await db.execute(query, *values)
+
+        return None

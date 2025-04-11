@@ -68,3 +68,27 @@ async def get_objects_to_sync(
         from_date,
         db,
     )
+
+
+@router.post(
+    "/{table_name}",
+    response_model=None,
+    status_code=status.HTTP_201_CREATED,
+)
+async def post_objects_to_sync(
+    table_name: str,
+    data: list[dict],
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+) -> None:
+    await service.sync_objects(
+        auth_data.tenant_id,
+        table_name,
+        data,
+        db,
+    )
+    return ORJSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=None,
+    )
