@@ -78,7 +78,6 @@ class SyncService:
                 tenant_id=tenant_id,
                 table=table_name,
                 data=d,
-                columns=schema.model_fields.keys(),
             )
             query += " ON CONFLICT (id) DO UPDATE SET "
             query += ", ".join(

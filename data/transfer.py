@@ -17,7 +17,7 @@ for row in df.iterrows():
         "athlete_status_id": athlete_status_id,
         "birth_number": row[1]["RČ"].replace("/", ""),
         "city": row[1]["Město"],
-        "club_id": "kurim",
+        "club_id": "akkurim",
         "ean": str(row[1]["EAN"]),
         "email": row[1]["E-mail"] if row[1]["E-mail"] != "" else None,
         "first_name": row[1]["Jméno"],
