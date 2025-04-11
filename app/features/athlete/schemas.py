@@ -21,6 +21,7 @@ class AthleteBase(BaseSchema):
     club_id: str
     profile_picture: Optional[str]
     athlete_status_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class AthleteCreate(AthleteBase):
@@ -70,6 +71,7 @@ class AthleteStatusBase(BaseSchema):
     id: UUID1
     name: str
     description: Optional[str]
+    deleted_at: Optional[AwareDatetime]
 
 
 class AthleteStatusCreate(AthleteStatusBase):
@@ -136,6 +138,7 @@ class SignUpFormBase(BaseSchema):
     note: Optional[str]
     sign_up_form_status_id: UUID1
     school_year_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class SignUpFormCreate(SignUpFormBase):
@@ -185,6 +188,7 @@ class SignUpFormStatusBase(BaseSchema):
     id: UUID1
     name: str
     description: Optional[str]
+    deleted_at: Optional[AwareDatetime]
 
 
 class SignUpFormStatusCreate(SignUpFormStatusBase):

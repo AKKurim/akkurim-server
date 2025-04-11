@@ -13,6 +13,7 @@ class ItemBase(BaseSchema):
     image: Optional[str]
     item_type_id: UUID1
     athlete_id: Optional[UUID1]
+    deleted_at: Optional[AwareDatetime]
 
 
 class ItemCreate(ItemBase):
@@ -61,6 +62,7 @@ class ItemReadPublic(ItemRead):
 class ItemTypeBase(BaseSchema):
     id: UUID1
     name: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class ItemTypeCreate(ItemTypeBase):

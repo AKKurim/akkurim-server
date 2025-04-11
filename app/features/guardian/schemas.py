@@ -11,6 +11,7 @@ class GuardianBase(BaseSchema):
     last_name: str
     email: EmailStr
     phone: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class GuardianCreate(GuardianBase):

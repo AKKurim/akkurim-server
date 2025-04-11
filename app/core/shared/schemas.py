@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import UUID1, AwareDatetime
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
@@ -6,6 +8,7 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 class SchoolYearBase(BaseSchema):
     id: UUID1
     name: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class SchoolYearCreate(SchoolYearBase):

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import UUID1, AwareDatetime
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
@@ -9,6 +11,7 @@ class TrainerBase(BaseSchema):
     trainer_status_id: UUID1
     qualification: str
     salary_per_hour: int
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainerCreate(TrainerBase):
@@ -58,6 +61,7 @@ class TrainerStatusBase(BaseSchema):
     id: UUID1
     name: str
     description: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainerStatusCreate(TrainerStatusBase):

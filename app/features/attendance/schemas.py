@@ -1,4 +1,5 @@
 from datetime import time
+from typing import Optional
 
 from pydantic import UUID1, AwareDatetime
 
@@ -11,6 +12,7 @@ class GroupBase(BaseSchema):
     description: str
     training_time_id: UUID1
     school_year_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class GroupCreate(GroupBase):
@@ -62,6 +64,7 @@ class TrainingBase(BaseSchema):
     datetime_: AwareDatetime
     duration_minutes: int
     description: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainingCreate(TrainingBase):
@@ -112,6 +115,7 @@ class TrainingTimeBase(BaseSchema):
     day: str
     summer_time: time
     winter_time: time
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainingTimeCreate(TrainingTimeBase):

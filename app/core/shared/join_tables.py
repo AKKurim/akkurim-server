@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import UUID1, AwareDatetime
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
@@ -6,6 +8,7 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 class AthleteGuardainBase(BaseSchema):
     athlete_id: UUID1
     guardian_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class AthleteGuardainCreate(AthleteGuardainBase):
@@ -34,6 +37,7 @@ class AthleteGuardainReadPublic(AthleteGuardainRead):
 class GroupAthleteBase(BaseSchema):
     group_id: UUID1
     athlete_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class GroupAthleteCreate(GroupAthleteBase):
@@ -62,6 +66,7 @@ class GroupAthleteReadPublic(GroupAthleteRead):
 class GroupAthleteBase(BaseSchema):
     group_id: UUID1
     athlete_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class GroupAthleteCreate(GroupAthleteBase):
@@ -90,6 +95,7 @@ class GroupAthleteReadPublic(GroupAthleteRead):
 class GroupTrainerBase(BaseSchema):
     group_id: UUID1
     trainer_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class GroupTrainerCreate(GroupTrainerBase):
@@ -119,6 +125,7 @@ class TrainingAthleteBase(BaseSchema):
     training_id: UUID1
     athlete_id: UUID1
     presence: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainingAthleteCreate(TrainingAthleteBase):
@@ -148,6 +155,7 @@ class TrainingTrainerBase(BaseSchema):
     training_id: UUID1
     trainer_id: UUID1
     presence: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class TrainingTrainerCreate(TrainingTrainerBase):
@@ -177,6 +185,7 @@ class AthleteMeetEventBase(BaseSchema):
     athlete_id: UUID1
     meet_event_id: UUID1
     result: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class AthleteMeetEventCreate(AthleteMeetEventBase):
@@ -205,6 +214,7 @@ class AthleteMeetEventReadPublic(AthleteMeetEventRead):
 class AthleteSignUpFormBase(BaseSchema):
     athlete_id: UUID1
     sign_up_form_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class AthleteSignUpFormCreate(AthleteSignUpFormBase):

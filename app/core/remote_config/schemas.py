@@ -9,6 +9,7 @@ class RemoteConfigBase(BaseSchema):
     id: int
     urgent_message: Optional[str]
     minimum_app_version: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class RemoteConfigCreate(RemoteConfigBase):
@@ -58,6 +59,7 @@ class ClubBase(BaseSchema):
     id: int
     name: str
     description: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class ClubCreate(ClubBase):

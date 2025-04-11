@@ -18,9 +18,9 @@ from app.core.sse.broadcast import broadcast as global_broadcast
 from app.core.sse.schemas import LocalActionEnum, SSEEvent
 from app.core.utils.sql_utils import (
     convert_uuid_to_str,
-    generate_sql_delete_with_returning,
     generate_sql_insert_with_returning,
     generate_sql_read,
+    generate_sql_soft_delete_with_returning,
     generate_sql_update_with_returning,
 )
 
@@ -131,7 +131,6 @@ class DefaultService:
         if not result:
             raise NotFoundError(self.table, data["id"])
 
-        logger.info(result["updated_at"], data["updated_at"])
         if result["updated_at"] > data["updated_at"]:
             raise AlreadyUpdatedError(self.table, data["id"])
 
@@ -163,10 +162,11 @@ class DefaultService:
         if not result:
             raise NotFoundError(self.table, id)
 
-        query, values = generate_sql_delete_with_returning(
+        query, values = generate_sql_soft_delete_with_returning(
             tenant_id,
             self.table,
             {"id": id},
+            self.read_model.model_fields.keys(),
         )
         await db.execute(query, *values)
         await self.notify_delete(tenant_id, id)

@@ -129,16 +129,17 @@ def generate_sql_update_with_returning(
     )
 
 
-def generate_sql_delete_with_returning(
+def generate_sql_soft_delete_with_returning(
     tenant_id: str,
     table: str,
     conditions: dict,
+    returning: list[str] = ["id"],
 ) -> tuple[str, tuple]:
     conditions_str = " AND ".join(
         [f"{key} = ${i + 1}" for i, key in enumerate(conditions.keys())]
     )
     return (
-        f"DELETE FROM {tenant_id}.{table} WHERE {conditions_str} RETURNING id;",
+        f"UPDATE {tenant_id}.{table} SET deleted_at = NOW() WHERE {conditions_str} RETURNING {', '.join(returning)};",
         tuple(conditions.values()),
     )
 

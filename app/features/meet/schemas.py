@@ -12,6 +12,7 @@ class DisciplineBase(BaseSchema):
     short_description: str
     description_en: str
     short_description_en: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class DisciplineCreate(DisciplineBase):
@@ -61,6 +62,7 @@ class DisciplineTypeBase(BaseSchema):
     id: int
     name: str
     description: Optional[str]
+    deleted_at: Optional[AwareDatetime]
 
 
 class DisciplineTypeCreate(DisciplineTypeBase):
@@ -113,6 +115,7 @@ class CategoryBase(BaseSchema):
     short_description: str
     description_en: str
     short_description_en: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class CategoryCreate(CategoryBase):
@@ -165,6 +168,7 @@ class MeetBase(BaseSchema):
     end_at: AwareDatetime
     location: str
     organizer: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class MeetCreate(MeetBase):
@@ -218,6 +222,7 @@ class MeetEventBase(BaseSchema):
     category_id: int
     start_at: AwareDatetime
     phase: str
+    deleted_at: Optional[AwareDatetime]
 
 
 class MeetEventCreate(MeetEventBase):

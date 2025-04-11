@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import UUID1, AwareDatetime
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
@@ -8,6 +10,7 @@ class WebPostBase(BaseSchema):
     title: str
     content: str
     trainer_id: UUID1
+    deleted_at: Optional[AwareDatetime]
 
 
 class WebPostCreate(WebPostBase):
