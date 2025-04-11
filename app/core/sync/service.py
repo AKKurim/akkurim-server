@@ -46,9 +46,14 @@ class SyncService:
             conditions={
                 "updated_at": {
                     "value": from_date,
-                    "operator": ">",
-                }
+                    "operator": ">=",
+                },
+                "deleted_at": {
+                    "value": from_date,
+                    "operator": ">=",
+                },
             },
+            condition_operator="OR",
         )
         res = await db.fetch(query, *values)
         return [convert_uuid_to_str(dict(r)) for r in res]

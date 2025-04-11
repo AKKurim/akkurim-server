@@ -36,6 +36,7 @@ def generate_sql_read(
     table: str,
     columns: list[str],
     conditions: dict[str, dict] = {},
+    condition_operator: str = "AND",
 ) -> tuple[str, tuple]:
     if table == "club":
         tenant_id = "public"
@@ -43,7 +44,7 @@ def generate_sql_read(
         tenant_id = "public"
 
     columns = ", ".join(columns)
-    conditions_str = " AND ".join(
+    conditions_str = f" {condition_operator} ".join(
         [
             f"{key} {conditions[key].get('operator', '=')} ${i + 1}"
             for i, key in enumerate(conditions.keys())
@@ -150,7 +151,7 @@ def generate_sql_tables_updated_after(
 ) -> str:
     return "UNION ALL ".join(
         [
-            f"(SELECT '{table_name}' as table_name FROM {tenant_id if table_name != 'club' and table_name != 'remote_config' else 'public'}.{table_name} WHERE updated_at > $1 LIMIT 1)"
+            f"(SELECT '{table_name}' as table_name FROM {tenant_id if table_name != 'club' and table_name != 'remote_config' else 'public'}.{table_name} WHERE updated_at > $1 OR deleted_at > $1 LIMIT 1)"
             for table_name in table_names
         ]
     )
