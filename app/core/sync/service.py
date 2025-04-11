@@ -79,12 +79,15 @@ class SyncService:
                 table=table_name,
                 data=d,
             )
+            query = query[:-1]  # remove semicolon
             query += " ON CONFLICT (id) DO UPDATE SET "
             query += ", ".join(
                 f"{col} = EXCLUDED.{col}"
                 for col in schema.model_fields.keys()
                 if col != "id"
             )
+            query += ";"
+            logger.info(query)
             await db.execute(query, *values)
 
         return None
