@@ -71,12 +71,8 @@ class SyncService:
             schema: BaseSchema = TABLE_NAMES[table_name]
         except KeyError:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
-        logger.info(
-            f"Syncing {len(data)} objects to {table_name} for tenant {tenant_id}"
-        )
         for d in data:
-            logger.info(f"Data: {d}")
-            d = schema(d)
+            d = schema(**d)
             d = d.dict(exclude_unset=True)
             query, values = generate_sql_insert(
                 tenant_id=tenant_id,
