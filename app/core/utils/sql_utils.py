@@ -50,6 +50,9 @@ def generate_sql_read(
             for i, key in enumerate(conditions.keys())
         ]
     )
+    conditions_str += (
+        " AND deleted_at IS NULL" if conditions_str != "" else "deleted_at IS NULL"
+    )
     return (
         f"SELECT {columns} FROM {tenant_id}.{table} {"WHERE " if conditions_str != "" else ""}{conditions_str};",
         tuple(val.get("value") for val in conditions.values()),
