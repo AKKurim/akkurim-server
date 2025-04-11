@@ -71,7 +71,7 @@ class SyncService:
         except KeyError:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
 
-        async for d in data:
+        for d in data:
             d = schema(**d.dict())
             d = d.dict(exclude_unset=True)
             query, values = generate_sql_insert(
