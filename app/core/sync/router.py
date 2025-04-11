@@ -10,6 +10,7 @@ from app.core.auth.dependecies import (
     is_trainer_and_tenant_info,
 )
 from app.core.auth.schemas import AuthData
+from app.core.logging import logger
 from app.core.shared.database import get_db
 from app.core.sync.service import SyncService
 from app.core.sync.sync_config import TABLE_NAMES
@@ -82,6 +83,9 @@ async def post_objects_to_sync(
     db: db_dep,
     service: service_dep,
 ) -> None:
+    logger.info(data)
+    logger.info(table_name)
+    logger.info("ROUTER")
     await service.sync_objects(
         auth_data.tenant_id,
         table_name,

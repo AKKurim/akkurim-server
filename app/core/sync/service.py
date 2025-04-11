@@ -1,6 +1,7 @@
 from asyncpg import Connection
 from pydantic import AwareDatetime
 
+from app.core.logging import logger
 from app.core.shared.base_schema import BaseSchema
 from app.core.sync.sync_config import TABLE_NAMES
 from app.core.utils.sql_utils import (
@@ -70,7 +71,10 @@ class SyncService:
             schema: BaseSchema = TABLE_NAMES[table_name]
         except KeyError:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
-
+        logger.info(
+            f"Syncing {len(data)} objects to {table_name} for tenant {tenant_id}"
+        )
+        logger.info(f"Data: {data}")
         for d in data:
             d = schema(**d)
             d = d.dict(exclude_unset=True)
