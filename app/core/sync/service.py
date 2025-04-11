@@ -72,7 +72,7 @@ class SyncService:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
 
         for d in data:
-            d = schema(**d.dict())
+            d = schema(**d)
             d = d.dict(exclude_unset=True)
             query, values = generate_sql_insert(
                 tenant_id=tenant_id,
