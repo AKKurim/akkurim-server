@@ -74,9 +74,9 @@ class SyncService:
         logger.info(
             f"Syncing {len(data)} objects to {table_name} for tenant {tenant_id}"
         )
-        logger.info(f"Data: {data}")
         for d in data:
-            d = schema(**d)
+            logger.info(f"Data: {d}")
+            d = schema(d)
             d = d.dict(exclude_unset=True)
             query, values = generate_sql_insert(
                 tenant_id=tenant_id,
