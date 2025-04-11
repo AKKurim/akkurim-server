@@ -37,6 +37,8 @@ def generate_example_values(schema: BaseSchema) -> dict[str, Any]:
                 example_values[field_name] = "Poznámka"
             elif "salary" in field_name:
                 example_values[field_name] = 150
+            elif "deleted_at" in field_name:
+                example_values[field_name] = None
             else:
                 example_values[field_name] = "some value"
 
