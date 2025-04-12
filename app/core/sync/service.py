@@ -65,6 +65,7 @@ class SyncService:
         tenant_id: str,
         table_name: str,
         data: list[BaseSchema],
+        primary_keys: list[str],
         db: Connection,
     ) -> None:
         try:
@@ -80,7 +81,7 @@ class SyncService:
                 data=d,
             )
             query = query[:-1]  # remove semicolon
-            query += " ON CONFLICT (id) DO UPDATE SET "
+            query += f" ON CONFLICT ({', '.join(primary_keys)}) DO UPDATE SET "
             query += ", ".join(
                 f"{col} = EXCLUDED.{col}"
                 for col in schema.model_fields.keys()

@@ -87,6 +87,7 @@ async def post_objects_to_sync(
         auth_data.tenant_id,
         table_name,
         data["data"],
+        data["primary_keys"],
         db,
     )
     return ORJSONResponse(
