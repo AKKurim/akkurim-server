@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from asyncpg import Connection
 from fastapi import APIRouter, Depends, status
@@ -78,7 +78,7 @@ async def get_objects_to_sync(
 )
 async def post_objects_to_sync(
     table_name: str,
-    data: dict[str, list[dict]],
+    data: dict[str, Any],
     auth_data: trainer_dep,
     db: db_dep,
     service: service_dep,
