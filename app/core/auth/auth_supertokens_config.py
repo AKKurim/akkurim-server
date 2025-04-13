@@ -45,13 +45,13 @@ def supertokens_init():
         recipe_list=[
             session.init(
                 expose_access_token_to_frontend_in_cookie_based_auth=True,
+                override=session.InputOverrideConfig(
+                    functions=custom_create_new_session
+                ),
             ),
             emailpassword.init(),
             dashboard.init(admins=[settings.DASHBOARD_ADMIN]),
             userroles.init(),
         ],
         mode="asgi",
-    )
-    session.init(
-        override=session.InputOverrideConfig(functions=custom_create_new_session)
     )
