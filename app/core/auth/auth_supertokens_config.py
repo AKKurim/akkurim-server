@@ -1,4 +1,5 @@
 from supertokens_python import InputAppInfo, SupertokensConfig, init
+from supertokens_python.asyncio import get_user
 from supertokens_python.recipe import dashboard, emailpassword, session, userroles
 from supertokens_python.recipe.session.interfaces import RecipeInterface
 
@@ -14,7 +15,7 @@ async def custom_create_new_session(input_: RecipeInterface):
         access_token_payload = access_token_payload or {}
 
         # Fetch user email using Supertokens user_id
-        user = await emailpassword.get_user_by_id(user_id)
+        user = await get_user(user_id)
         if user is not None:
             access_token_payload["email"] = user.email
 
