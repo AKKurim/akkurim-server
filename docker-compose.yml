@@ -72,6 +72,7 @@ services:
       - 3569:3567
     environment:
       POSTGRESQL_CONNECTION_URI: "postgresql://${DB_SUPERTOKENS_USER}:${DB_SUPERTOKENS_PASSWORD}@dbsupertokens:5432/${DB_SUPERTOKENS_NAME}"
+      ACCESS_TOKEN_VALIDITY: ${SUPERTOKENS_ACCESS_TOKEN_VALIDITY}
     networks:
       - akkurim_network_dev
     restart: unless-stopped
