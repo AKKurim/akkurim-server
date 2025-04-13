@@ -50,7 +50,7 @@ def supertokens_init():
             session.init(
                 expose_access_token_to_frontend_in_cookie_based_auth=True,
                 override=session.InputOverrideConfig(
-                    functions=custom_create_new_session
+                    functions=override_create_new_session_function
                 ),
             ),
             emailpassword.init(),
