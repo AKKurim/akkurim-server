@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.core.logging import logger
 
 
-async def custom_create_new_session(input_: RecipeInterface):
+def custom_create_new_session(input_: RecipeInterface):
     original_create = input_.create_new_session
 
     async def override_create_new_session(
