@@ -1,11 +1,34 @@
 from supertokens_python import InputAppInfo, SupertokensConfig, init
 from supertokens_python.recipe import dashboard, emailpassword, session, userroles
+from supertokens_python.recipe.session.interfaces import RecipeInterface
 
 from app.core.config import settings
 
 
+async def custom_create_new_session(input_: RecipeInterface):
+    original_create = input_.create_new_session
+
+    async def override_create_new_session(
+        user_id, access_token_payload=None, session_data=None, user_context=None
+    ):
+        access_token_payload = access_token_payload or {}
+
+        # Fetch user email using Supertokens user_id
+        user = await emailpassword.get_user_by_id(user_id)
+        if user is not None:
+            access_token_payload["email"] = user.email
+
+        return await original_create(
+            user_id, access_token_payload, session_data, user_context
+        )
+
+    input_.create_new_session = override_create_new_session
+    return input_
+
+
 def supertokens_init():
     init(
+        override=session.InputOverrideConfig(functions=custom_create_new_session),
         app_info=InputAppInfo(
             app_name=settings.APP_NAME,
             api_domain=settings.API_DOMAIN,
