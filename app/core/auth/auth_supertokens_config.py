@@ -28,7 +28,6 @@ async def custom_create_new_session(input_: RecipeInterface):
 
 def supertokens_init():
     init(
-        override=session.InputOverrideConfig(functions=custom_create_new_session),
         app_info=InputAppInfo(
             app_name=settings.APP_NAME,
             api_domain=settings.API_DOMAIN,
@@ -48,4 +47,7 @@ def supertokens_init():
             userroles.init(),
         ],
         mode="asgi",
+    )
+    session.init(
+        override=session.InputOverrideConfig(functions=custom_create_new_session)
     )
