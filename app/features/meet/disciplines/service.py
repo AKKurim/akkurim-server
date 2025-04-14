@@ -96,7 +96,7 @@ class DisciplineService(DefaultService):
             DisciplineTypeRead.model_fields.keys(),
         )
         res = await db.fetch(query, *values)
-        return [DisciplineTypeRead.model_validate(dict(row)) for row in res]
+        return [(dict(row)) for row in res]
 
     async def create_discipline_type(
         self,
@@ -117,11 +117,11 @@ class DisciplineService(DefaultService):
             table_name="discipline_type",
             endpoint="/discipline/type/",  # update all statuses since it we dont have a specific endpoint
             local_action=LocalActionEnum.upsert,
-            id=str(res["id"]),
+            id=str(discipline_type.id),
         )
         await global_broadcast.publish(
             channel="update",
             message=orjson.dumps(event.model_dump()).decode("utf-8"),
         )
 
-        return DisciplineTypeRead.model_validate(dict(res))
+        return dict(res)
