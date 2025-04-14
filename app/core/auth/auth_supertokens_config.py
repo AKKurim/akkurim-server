@@ -1,5 +1,9 @@
+from typing import Optional
+
 from supertokens_python import InputAppInfo, SupertokensConfig, init
+from supertokens_python.asyncio import get_user
 from supertokens_python.recipe import dashboard, emailpassword, session, userroles
+from supertokens_python.recipe.session.interfaces import RecipeInterface
 
 from app.core.config import settings
 

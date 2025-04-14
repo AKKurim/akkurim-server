@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from asyncpg import Connection
 from fastapi import APIRouter, Depends, status
@@ -10,6 +10,7 @@ from app.core.auth.dependecies import (
     is_trainer_and_tenant_info,
 )
 from app.core.auth.schemas import AuthData
+from app.core.logging import logger
 from app.core.shared.database import get_db
 from app.core.sync.service import SyncService
 from app.core.sync.sync_config import TABLE_NAMES
@@ -67,4 +68,29 @@ async def get_objects_to_sync(
         table_name,
         from_date,
         db,
+    )
+
+
+@router.post(
+    "/{table_name}",
+    response_model=None,
+    status_code=status.HTTP_201_CREATED,
+)
+async def post_objects_to_sync(
+    table_name: str,
+    data: dict[str, Any],
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+) -> None:
+    await service.sync_objects(
+        auth_data.tenant_id,
+        table_name,
+        data["data"],
+        data["primary_keys"],
+        db,
+    )
+    return ORJSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content=None,
     )
