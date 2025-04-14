@@ -16,6 +16,7 @@ from app.core.utils.sql_utils import (
 from app.features.athlete.schemas import (
     AthleteCreate,
     AthleteRead,
+    AthleteStatusCreate,
     AthleteStatusRead,
     AthleteUpdate,
 )
@@ -107,7 +108,7 @@ class AthleteService(DefaultService):
     async def create_status(
         self,
         tenant_id: str,
-        status: AthleteStatusRead,
+        status: AthleteStatusCreate,
         db: Connection,
     ) -> AthleteStatusRead:
         query, values = generate_sql_insert_with_returning(

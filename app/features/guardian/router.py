@@ -142,20 +142,19 @@ async def read_all_guardians(
     return ORJSONResponse(guardians, status_code=status.HTTP_200_OK)
 
 
-# todo probably move the updated_at to query params
-@router.get(
-    "/sync/",
-    response_model=list[GuardianReadPublic],
-)
-async def read_all_guardians_updated_after(
-    last_updated_at: AwareDatetime,
-    auth_data: trainer_dep,
-    db: db_dep,
-    service: service_dep,
-) -> list[GuardianReadPublic]:
-    guardians = await service.get_all_guardians_updated_after(
-        auth_data.tenant_id,
-        last_updated_at,
-        db,
-    )
-    return ORJSONResponse(guardians, status_code=status.HTTP_200_OK)
+# @router.get(
+#     "/sync/",
+#     response_model=list[GuardianReadPublic],
+# )
+# async def read_all_guardians_updated_after(
+#     last_updated_at: AwareDatetime,
+#     auth_data: trainer_dep,
+#     db: db_dep,
+#     service: service_dep,
+# ) -> list[GuardianReadPublic]:
+#     guardians = await service.get_all_guardians_updated_after(
+#         auth_data.tenant_id,
+#         last_updated_at,
+#         db,
+#     )
+#     return ORJSONResponse(guardians, status_code=status.HTTP_200_OK)

@@ -140,25 +140,24 @@ async def read_athletes(
     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
 
 
-@router.get(
-    "/sync/",
-    response_model=list[AthleteReadPublic],
-)
-async def read_athletes_updated_after(
-    last_updated_at: AwareDatetime,
-    auth_data: trainer_dep,
-    db: db_dep,
-    service: service_dep,
-) -> list[AthleteReadPublic]:
-    athletes = await service.get_all_athletes_updated_after(
-        auth_data.tenant_id,
-        last_updated_at,
-        db,
-    )
-    return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
+# @router.get(
+#     "/sync/",
+#     response_model=list[AthleteReadPublic],
+# )
+# async def read_athletes_updated_after(
+#     last_updated_at: AwareDatetime,
+#     auth_data: trainer_dep,
+#     db: db_dep,
+#     service: service_dep,
+# ) -> list[AthleteReadPublic]:
+#     athletes = await service.get_all_athletes_updated_after(
+#         auth_data.tenant_id,
+#         last_updated_at,
+#         db,
+#     )
+#     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
 
 
-# TODO move sync to a separate endpoint along with other sync endpoints
 @router.get(
     "/status/",
     response_model=list[AthleteStatusReadPublic],
