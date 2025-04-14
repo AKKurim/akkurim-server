@@ -117,7 +117,7 @@ class DisciplineService(DefaultService):
             table_name="discipline_type",
             endpoint="/discipline/type/",  # update all statuses since it we dont have a specific endpoint
             local_action=LocalActionEnum.upsert,
-            id=str(discipline_type.id),
+            id=str(discipline_type["id"]),
         )
         await global_broadcast.publish(
             channel="update",
