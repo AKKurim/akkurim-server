@@ -611,4 +611,14 @@ ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form
     ON DELETE NO ACTION
     NOT VALID;
 
+alter table if exists tenant_id.group_trainer add primary key (group_id, trainer_id);
+alter table if exists tenant_id.group_athlete add primary key (group_id, athlete_id);
+alter table if exists tenant_id.training_athlete add primary key (training_id, athlete_id);
+alter table if exists tenant_id.training_trainer add primary key (training_id, trainer_id);
+alter table if exists tenant_id.athlete_guardian add primary key (athlete_id, guardian_id);
+/*alter table if exists tenant_id.athlete_item add primary key (athlete_id, item_id);*/
+alter table if exists tenant_id.athlete_meet_event add primary key (athlete_id, meet_event_id);
+alter table if exists tenant_id.athlete_sign_up_form add primary key (athlete_id, sign_up_form_id);
+
+
 END;
