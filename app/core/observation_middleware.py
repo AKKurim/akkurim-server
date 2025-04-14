@@ -44,5 +44,5 @@ class ObservationMiddleware:
                 return
             process_time = time.perf_counter() - start_time
             logger.info(
-                f"Request {scope['path']}, code {status_code}, processed in {process_time:.6f}s"
+                f"Request {scope['method']} {scope['path']}, code {status_code}, processed in {process_time:.6f}s"
             )
