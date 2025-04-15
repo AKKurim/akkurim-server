@@ -22,5 +22,4 @@ for category in CATEGORIES:
 response = requests.post(
     url, json={"data": all_categories, "primary_keys": ["id"], "table": "category"}
 )
-print(response.status_code)
 print(response.text)
