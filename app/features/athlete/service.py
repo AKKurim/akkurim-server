@@ -150,3 +150,28 @@ class AthleteService(DefaultService):
         )
         ress = await db.fetch(query, *values)
         return [convert_uuid_to_str(dict(res)) for res in ress]
+
+    async def search_by_names(
+        self,
+        tenant_id: str,
+        db: Connection,
+        first_name: str | None = None,
+        last_name: str | None = None,
+    ) -> list[AthleteRead]:
+        query, values = generate_sql_read(
+            tenant_id,
+            "athlete",
+            AthleteRead.model_fields.keys(),
+            {
+                "first_name": {
+                    "value": f"%{first_name}%",
+                    "operator": "LIKE",
+                },
+                "last_name": {
+                    "value": f"%{last_name}%",
+                    "operator": "LIKE",
+                },
+            },
+        )
+        ress = await db.fetch(query, *values)
+        return [convert_uuid_to_str(dict(res)) for res in ress]
