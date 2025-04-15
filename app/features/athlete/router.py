@@ -209,7 +209,7 @@ async def get_guardians_for_athlete(
 
 
 @router.get(
-    "/athlete/search/{last_name}/{first_name}/",
+    "/search/{last_name}/{first_name}/",
     response_model=list[AthleteReadPublic],
 )
 async def search_athletes(
