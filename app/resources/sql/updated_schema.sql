@@ -572,13 +572,6 @@ ALTER TABLE IF EXISTS tenant_id.meet_event
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS tenant_id.meet_event
-    ADD FOREIGN KEY (meet_type)
-    REFERENCES tenant_id.meet (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
 
 ALTER TABLE IF EXISTS tenant_id.athlete_meet_event
     ADD FOREIGN KEY (athlete_id)
