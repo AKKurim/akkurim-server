@@ -222,7 +222,7 @@ async def search_athletes(
     athletes = await service.search_by_names(
         auth_data.tenant_id,
         db,
-        last_name,
         first_name,
+        last_name,
     )
     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
