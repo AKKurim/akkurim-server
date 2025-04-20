@@ -3,12 +3,12 @@ from typing import Annotated, Optional
 from pydantic import UUID1, AfterValidator, AwareDatetime, EmailStr
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
-from app.features.athlete.utils import pydanyic_validate_birth_number
+from app.features.athlete.utils import validate_birth_number
 
 
 class AthleteBase(BaseSchema):
     id: UUID1
-    birth_number: Annotated[str, AfterValidator(pydanyic_validate_birth_number)]
+    birth_number: Annotated[str, AfterValidator(validate_birth_number)]
     first_name: str
     last_name: str
     street: str
@@ -119,7 +119,7 @@ class AthleteStatusReadPublic(AthleteStatusRead):
 
 class SignUpFormBase(BaseSchema):
     id: UUID1
-    birth_number: Annotated[str, AfterValidator(pydanyic_validate_birth_number)]
+    birth_number: Annotated[str, AfterValidator(validate_birth_number)]
     first_name: str
     last_name: str
     street: str

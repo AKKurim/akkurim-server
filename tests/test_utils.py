@@ -1,12 +1,12 @@
 from app.features.athlete.utils import (
+    _validate_birth_number,
     convert_birht_number_to_date,
-    validate_birth_number,
 )
 
 
 def test_validate_birth_number():
-    assert validate_birth_number("0409090033")
-    assert not validate_birth_number("0409090034")
+    assert _validate_birth_number("0409090033")
+    assert not _validate_birth_number("0409090034")
 
 
 def test_convert_birht_number_to_date():

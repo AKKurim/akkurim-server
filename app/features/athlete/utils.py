@@ -1,4 +1,4 @@
-def validate_birth_number(birth_number: str) -> bool:
+def _validate_birth_number(birth_number: str) -> bool:
     """
     Validate a birth number.
     """
@@ -15,8 +15,8 @@ def validate_birth_number(birth_number: str) -> bool:
     return mod == int(control_number)
 
 
-def pydanyic_validate_birth_number(birth_number: str) -> str:
-    if not validate_birth_number(birth_number):
+def validate_birth_number(birth_number: str) -> str:
+    if not _validate_birth_number(birth_number):
         raise ValueError("Invalid birth number")
     return birth_number
 

@@ -142,17 +142,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.trainer
     UNIQUE (athlete_id),
   deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
 
-/* CREATE TABLE IF NOT EXISTS tenant_id.athlete_item
-(
-    athlete_id uuid NOT NULL,
-    item_id uuid NOT NULL,
-
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL); */
-
-
-
 CREATE TABLE IF NOT EXISTS tenant_id.web_post
 (
     id uuid NOT NULL,
@@ -412,22 +401,6 @@ ALTER TABLE IF EXISTS tenant_id.trainer
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS tenant_id.athlete_item
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS tenant_id.athlete_item
-    ADD FOREIGN KEY (item_id)
-    REFERENCES tenant_id.item (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
 ALTER TABLE IF EXISTS tenant_id.web_post
     ADD FOREIGN KEY (trainer_id)
     REFERENCES tenant_id.trainer (id) MATCH SIMPLE
@@ -609,7 +582,6 @@ alter table if exists tenant_id.group_athlete add primary key (group_id, athlete
 alter table if exists tenant_id.training_athlete add primary key (training_id, athlete_id);
 alter table if exists tenant_id.training_trainer add primary key (training_id, trainer_id);
 alter table if exists tenant_id.athlete_guardian add primary key (athlete_id, guardian_id);
-/*alter table if exists tenant_id.athlete_item add primary key (athlete_id, item_id);*/
 alter table if exists tenant_id.athlete_meet_event add primary key (athlete_id, meet_event_id);
 alter table if exists tenant_id.athlete_sign_up_form add primary key (athlete_id, sign_up_form_id);
 
