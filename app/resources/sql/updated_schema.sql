@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.item
     count smallint NOT NULL,
     item_type_id uuid NOT NULL,
     athlete_id uuid,
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
   deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
