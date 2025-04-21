@@ -90,4 +90,4 @@ networks:
 volumes:
   postgres_data_main:
   postgres_auth_main:
-  fastapi_logs_main:
+  fastapi_logs:
