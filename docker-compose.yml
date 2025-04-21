@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: akkurim-server-dev
-    container_name: akkurim-server-dev
+    image: akkurim-server-main
+    container_name: akkurim-server-main
     restart: always
     ports:
-      - "8002:8000"
+      - "8001:8000"
     networks:
-      - akkurim_network_dev
+      - akkurim_network_main
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - API_KEY=${API_KEY}
@@ -17,7 +17,7 @@ services:
     volumes:
       - fastapi_logs:/app/logs
     #healthcheck:
-    #    test: [ "CMD", "curl", "https://devapi.akkurim.cz/"]
+    #    test: [ "CMD", "curl", "https://api.akkurim.cz/"]
     #    interval: 1m
     #    timeout: 5s
     #    retries: 3
@@ -32,11 +32,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
-      - postgres_data_dev:/var/lib/postgresql/data
+      - postgres_data_main:/var/lib/postgresql/data
     #ports: shouldnt be needed since we are accessing the db internally
     #  - 5434:5432
     networks:
-      - akkurim_network_dev
+      - akkurim_network_main
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', '${DB_USER}', '-d', '${DB_NAME}']
@@ -51,11 +51,11 @@ services:
       POSTGRES_PASSWORD: ${DB_SUPERTOKENS_PASSWORD}
       POSTGRES_DB: ${DB_SUPERTOKENS_NAME}
     volumes:
-      - postgres_auth_dev:/var/lib/postgresql/data
+      - postgres_auth_main:/var/lib/postgresql/data
     #ports:
     #  - 5435:5432
     networks:
-      - akkurim_network_dev
+      - akkurim_network_main
     restart: unless-stopped
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', '${DB_SUPERTOKENS_USER}', '-d', '${DB_SUPERTOKENS_NAME}']
@@ -74,7 +74,7 @@ services:
       POSTGRESQL_CONNECTION_URI: "postgresql://${DB_SUPERTOKENS_USER}:${DB_SUPERTOKENS_PASSWORD}@dbsupertokens:5432/${DB_SUPERTOKENS_NAME}"
       ACCESS_TOKEN_VALIDITY: ${SUPERTOKENS_ACCESS_TOKEN_VALIDITY}
     networks:
-      - akkurim_network_dev
+      - akkurim_network_main
     restart: unless-stopped
     healthcheck:
       test: >
@@ -84,10 +84,10 @@ services:
       retries: 5
 
 networks:
-  akkurim_network_dev:
+  akkurim_network_main:
     driver: bridge
 
 volumes:
-  postgres_data_dev:
-  postgres_auth_dev:
-  fastapi_logs:
+  postgres_data_main:
+  postgres_auth_main:
+  fastapi_logs_main:
