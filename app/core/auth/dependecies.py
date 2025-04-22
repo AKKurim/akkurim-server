@@ -18,14 +18,16 @@ async def verify_and_get_auth_data(
     if settings.DEBUG:
         return fake_auth_data()
     user_roles = await session.get_claim_value(UserRoleClaim)
-    logger.info(len(user_roles))
     if len(user_roles) != 1:
         raise_invalid_claims_exception(
             "Wrong user config", [ClaimValidationError(UserRoleClaim.key, None)]
         )
     user_role: str = user_roles[0]
     logger.info(user_role)
-    tenant_id, *roles = user_role.split("_")
+    try:
+        tenant_id, *roles = user_role.split("_")
+    except:
+        logger.info("exception")
     logger.info(tenant_id, roles)
     return AuthData(tenant_id=tenant_id, roles=roles)
 
