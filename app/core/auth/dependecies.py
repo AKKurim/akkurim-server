@@ -9,6 +9,7 @@ from supertokens_python.recipe.userroles import UserRoleClaim
 
 from app.core.auth.schemas import AuthData
 from app.core.config import settings
+from app.core.logging import logger
 
 
 async def verify_and_get_auth_data(
@@ -16,8 +17,8 @@ async def verify_and_get_auth_data(
 ) -> AuthData:
     if settings.DEBUG:
         return fake_auth_data()
-
     user_roles = await session.get_claim_value(UserRoleClaim)
+    logger.info(str(user_roles))
     if len(user_roles) != 1:
         raise_invalid_claims_exception(
             "Wrong user config", [ClaimValidationError(UserRoleClaim.key, None)]
