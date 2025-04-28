@@ -27,7 +27,7 @@ class MeetEventService(DefaultService):
     async def get_meet_events_by_meet_id(
         self,
         tenant_id: str,
-        meet_id: int,
+        meet_id: str,
         db: Connection,
     ) -> list[MeetEventRead]:
         query, values = generate_sql_read(

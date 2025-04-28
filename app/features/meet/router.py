@@ -42,7 +42,7 @@ service_dep = Annotated[MeetEventService, Depends(MeetEventService)]
     response_model=list[MeetEventReadPublic],
 )
 async def read_discipline(
-    meet_id: int,
+    meet_id: str,
     auth_data: trainer_dep,
     db: db_dep,
     service: service_dep,
