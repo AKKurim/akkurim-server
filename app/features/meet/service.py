@@ -42,8 +42,4 @@ class MeetEventService(DefaultService):
             },
         )
         result = await db.fetch(query, *values)
-        return (
-            [MeetEventRead(**convert_uuid_to_str(row)) for row in result]
-            if result
-            else []
-        )
+        return [convert_uuid_to_str(dict(row)) for row in result] if result else []
