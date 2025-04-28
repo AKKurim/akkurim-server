@@ -33,7 +33,7 @@ class MeetEventService(DefaultService):
         query, values = generate_sql_read(
             tenant_id=tenant_id,
             table=self.table,
-            columns=self.read_model.model_dump().keys(),
+            columns=self.read_model.model_fields.keys(),
             conditions={
                 "meet_id": {
                     "value": meet_id,
