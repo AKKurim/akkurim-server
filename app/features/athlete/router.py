@@ -226,3 +226,22 @@ async def search_athletes(
         last_name,
     )
     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
+
+
+@router.get(
+    "/search/{last_name}",
+    response_model=list[AthleteReadPublic],
+)
+async def search_athletes(
+    last_name: str,
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+) -> list[AthleteReadPublic]:
+    athletes = await service.search_by_names(
+        auth_data.tenant_id,
+        db,
+        "",
+        last_name,
+    )
+    return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
