@@ -54,6 +54,7 @@ app.add_middleware(
         settings.WEBSITE_DOMAIN,
         settings.API_DOMAIN,
         settings.PUBLIC_DOMAIN,
+        "http://localhost:3000",  # for local dev
     ],
     allow_credentials=True,
     allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
