@@ -19,7 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # sql = 'alter table "tenant_id.athlete_meet_event" add column "wind" text, add column "pb_sb" text, add column "points" text;'
+    # sql = 'alter table tenant_id.athlete_meet_event add column "wind" text, add column "pb_sb" text, add column "points" text;'
     # with open("/app/app/resources/sql/active_tenants.txt", "r", encoding="utf-8") as f:
     #     tenants = [each for each in f.read().split("\n") if each]
 
@@ -28,6 +28,7 @@ def upgrade() -> None:
     #     conn.execute(sa.text(sql.replace("tenant_id", tenant_id)))
     pass
     # manually in db since alembic thinks the table doesnt exist even tho it clearly does
+    # alright the error was the extra "" i used
 
 
 def downgrade() -> None:
