@@ -18,15 +18,25 @@ async def verify_and_get_auth_data(
         return fake_auth_data()
 
     user_roles = await session.get_claim_value(UserRoleClaim)
-    if len(user_roles) != 1:
+    tenant = ""
+    roles = []
+    for role in user_roles:
+        if role.startswith("tenant-"):
+            tenant = role.split("-")[1]
+        elif role.startswith("role-"):
+            roles.append(role.split("-")[1])
+        elif role == "status-disabled":
+            raise_invalid_claims_exception(
+                "User is disabled", [ClaimValidationError(UserRoleClaim.key, None)]
+            )
+    if tenant == "":
         raise_invalid_claims_exception(
-            "Wrong user config", [ClaimValidationError(UserRoleClaim.key, None)]
+            "Tenant not found", [ClaimValidationError(UserRoleClaim.key, None)]
         )
-    user_role: str = user_roles[0]
-    tenant_id, *roles = user_role.split("_")
-    return AuthData(tenant_id=tenant_id, roles=roles)
+    return AuthData(tenant_id=tenant, roles=tuple(roles))
 
 
+# TODO maybe change this to copy a real structure but it works for now
 def fake_auth_data():
     user_role = "akkurim_trainer_admin_guardian_athlete"
     tenant_id, *roles = user_role.split("_")
