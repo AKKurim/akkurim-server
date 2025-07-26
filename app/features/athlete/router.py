@@ -212,7 +212,7 @@ async def get_guardians_for_athlete(
     "/search/{last_name}/{first_name}/",
     response_model=list[AthleteReadPublic],
 )
-async def search_athletes(
+async def search_athletes_full_name(
     last_name: str,
     first_name: str,
     auth_data: trainer_dep,

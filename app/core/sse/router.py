@@ -45,5 +45,5 @@ async def broadcast_event():
         message=orjson.dumps(
             event.model_dump(),
         ).decode("utf-8"),
-    ),
+    )
     return ORJSONResponse(event.model_dump(), status_code=200)
