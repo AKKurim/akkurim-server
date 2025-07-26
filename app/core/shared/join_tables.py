@@ -184,7 +184,10 @@ class TrainingTrainerReadPublic(TrainingTrainerRead):
 class AthleteMeetEventBase(BaseSchema):
     athlete_id: UUID1
     meet_event_id: UUID1
-    result: str
+    result: Optional[str] = None
+    wind: Optional[str] = None
+    pb_sb: Optional[str] = None
+    points: Optional[str] = None
     deleted_at: Optional[AwareDatetime]
 
 

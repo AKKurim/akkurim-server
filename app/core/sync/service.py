@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from asyncpg import Connection
 from pydantic import AwareDatetime
 
@@ -75,6 +77,9 @@ class SyncService:
         for d in data:
             d = schema(**d)
             d = d.dict(exclude_unset=True)
+            # IMPORTANT: ensure updated_at is set to server timestamp
+            # due to sync implementation in the frontend (only sync objects after the last sync)
+            d["updated_at"] = datetime.now(timezone.utc)
             query, values = generate_sql_insert(
                 tenant_id=tenant_id,
                 table=table_name,

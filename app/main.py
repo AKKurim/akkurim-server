@@ -23,6 +23,7 @@ from app.core.sync.router import router as sync_router
 from app.features.athlete.router import router as athlete_router
 from app.features.guardian.router import router as guardian_router
 from app.features.meet.disciplines.router import router as discipline_router
+from app.features.meet.router import router as meet_event_router
 from app.features.trainer.router import router as trainer_router
 
 
@@ -53,6 +54,7 @@ app.add_middleware(
         settings.WEBSITE_DOMAIN,
         settings.API_DOMAIN,
         settings.PUBLIC_DOMAIN,
+        "http://localhost:3000",  # for local dev
     ],
     allow_credentials=True,
     allow_methods=["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
@@ -68,6 +70,7 @@ app.include_router(guardian_router, prefix=settings.API_V1_PREFIX)
 app.include_router(remote_config_router, prefix=settings.API_V1_PREFIX)
 app.include_router(trainer_router, prefix=settings.API_V1_PREFIX)
 app.include_router(discipline_router, prefix=settings.API_V1_PREFIX)
+app.include_router(meet_event_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get(
