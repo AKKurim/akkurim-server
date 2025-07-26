@@ -338,6 +338,9 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_meet_event
     athlete_id uuid NOT NULL,
     meet_event_id uuid NOT NULL,
     result text,
+    wind text,
+    pb_sb text,
+    points text,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
   deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
