@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.meet
 CREATE TABLE IF NOT EXISTS tenant_id.meet_event
 (
     id uuid NOT NULL,
-    meet_id uuid COLLATE pg_catalog."default" NOT NULL,
+    meet_id uuid NOT NULL,
     discipline_id smallint NOT NULL,
     category_id smallint NOT NULL,
     start_at timestamp with time zone NOT NULL,
