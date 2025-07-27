@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete
     ean text COLLATE pg_catalog."default",
     note text COLLATE pg_catalog."default",
     club_id text COLLATE pg_catalog."default",
-    profile_image_id uuid COLLATE pg_catalog."default",
+    profile_image_id uuid,
     status text NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.item_type
 
 CREATE TABLE IF NOT EXISTS tenant_id.meet
 (
-    id uuid COLLATE pg_catalog."default" NOT NULL,
+    id uuid NOT NULL,
     type text NOT NULL,
     external_id text,
     name text COLLATE pg_catalog."default" NOT NULL,
