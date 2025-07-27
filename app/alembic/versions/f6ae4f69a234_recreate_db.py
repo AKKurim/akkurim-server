@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    with open("/app/app/resources/sql/updated_schema.sql", "r", encoding="utf-8") as f:
+    with open("/app/app/resources/sql/schema.sql", "r", encoding="utf-8") as f:
         sql = f.read()
 
     with open("/app/app/resources/sql/active_tenants.txt", "r", encoding="utf-8") as f:
