@@ -226,7 +226,7 @@ class MeetReadPublic(MeetRead):
 
 class MeetEventBase(BaseSchema):
     id: UUID1
-    meet_id: str
+    meet_id: UUID1
     discipline_id: int
     category_id: int
     start_at: AwareDatetime
