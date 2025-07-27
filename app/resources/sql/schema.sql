@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete
     CONSTRAINT athlete_ean_key UNIQUE (ean),
     CONSTRAINT athlete_email_key UNIQUE (email),
     CONSTRAINT athlete_phone_key UNIQUE (phone),
-    CONSTRAINT athlete_profile_picture_key UNIQUE (profile_picture)
+    CONSTRAINT athlete_profile_picture_key UNIQUE (profile_image_id)
 );
 
 CREATE TABLE IF NOT EXISTS tenant_id.athlete_guardian
