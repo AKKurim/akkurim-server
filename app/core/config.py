@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     SUPERTOKENS_CONNECTION_URI: str = "http://supertokens:3567"
     API_DOMAIN: str = "http://localhost:8001"
-    WEBSITE_DOMAIN: str = "http://localhost:3001"
+    WEBSITE_DOMAIN: str = "http://localhost:3000"
     API_KEY: str = os.getenv("API_KEY", "none")
     DASHBOARD_ADMIN: str = "tajovsky.matej@gmail.com"
 

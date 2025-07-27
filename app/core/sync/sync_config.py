@@ -9,12 +9,7 @@ from app.core.shared.join_tables import (
     TrainingTrainerReadPublic,
 )
 from app.core.shared.schemas import SchoolYearReadPublic
-from app.features.athlete.schemas import (
-    AthleteReadPublic,
-    AthleteStatusReadPublic,
-    SignUpFormReadPublic,
-    SignUpFormStatusReadPublic,
-)
+from app.features.athlete.schemas import AthleteReadPublic, SignUpFormReadPublic
 from app.features.attendance.schemas import (
     GroupReadPublic,
     TrainingReadPublic,
@@ -29,18 +24,17 @@ from app.features.meet.schemas import (
     MeetEventReadPublic,
     MeetReadPublic,
 )
-from app.features.trainer.schemas import TrainerReadPublic, TrainerStatusReadPublic
+from app.features.trainer.schemas import TrainerReadPublic
 from app.features.web_management.schemas import WebPostReadPublic
 
+# TODO edit this file to use the new schemas
 TABLE_NAMES = {
     # "table_name": Schema
     "club": ClubReadPublic,
     "remote_config": RemoteConfigReadPublic,
     "school_year": SchoolYearReadPublic,
     "athlete": AthleteReadPublic,
-    "athlete_status": AthleteStatusReadPublic,
     "trainer": TrainerReadPublic,
-    "trainer_status": TrainerStatusReadPublic,
     "guardian": GuardianReadPublic,
     "athlete_guardian": AthleteGuardainReadPublic,
     "item": ItemReadPublic,
@@ -54,7 +48,6 @@ TABLE_NAMES = {
     "training_athlete": TrainingAthleteReadPublic,
     "training_trainer": TrainingTrainerReadPublic,
     "sign_up_form": SignUpFormReadPublic,
-    "sign_up_form_status": SignUpFormStatusReadPublic,
     "meet": MeetReadPublic,
     "discipline": DisciplineReadPublic,
     "discipline_type": DisciplineTypeReadPublic,
