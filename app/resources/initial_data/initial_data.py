@@ -20,6 +20,6 @@ async def main():
 
 if __name__ == "__main__":
     loop = get_event_loop()
-    main()
+    loop.run_until_complete(main())
     loop.close()
     pass
