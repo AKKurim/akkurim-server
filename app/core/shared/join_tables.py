@@ -241,3 +241,91 @@ class AthleteSignUpFormReadPublic(AthleteSignUpFormRead):
             ],
         }
     }
+
+
+class SignUpGroupFormBase(BaseSchema):
+    sign_up_form_id: UUID1
+    group_id: UUID1
+    deleted_at: Optional[AwareDatetime]
+
+
+class SignUpGroupFormCreate(SignUpGroupFormBase):
+    pass
+
+
+class SignUpGroupFormUpdate(SignUpGroupFormBase):
+    updated_at: AwareDatetime
+
+
+class SignUpGroupFormRead(SignUpGroupFormBase):
+    created_at: AwareDatetime
+    updated_at: AwareDatetime
+
+
+class SignUpGroupFormReadPublic(SignUpGroupFormRead):
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                generate_example_values(SignUpGroupFormRead),
+            ],
+        }
+    }
+
+
+class AthleteRegistrationMeetEventBase(BaseSchema):
+    athlete_id: UUID1
+    meet_event_id: UUID1
+    status: str
+    deleted_at: Optional[AwareDatetime]
+
+
+class AthleteRegistrationMeetEventCreate(AthleteRegistrationMeetEventBase):
+    pass
+
+
+class AthleteRegistrationMeetEventUpdate(AthleteRegistrationMeetEventBase):
+    updated_at: AwareDatetime
+
+
+class AthleteRegistrationMeetEventRead(AthleteRegistrationMeetEventBase):
+    created_at: AwareDatetime
+    updated_at: AwareDatetime
+
+
+class AthleteRegistrationMeetEventReadPublic(AthleteRegistrationMeetEventRead):
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                generate_example_values(AthleteRegistrationMeetEventRead),
+            ],
+        }
+    }
+
+
+class RequestFileBase(BaseSchema):
+    request_id: UUID1
+    file_id: UUID1
+    deleted_at: Optional[AwareDatetime]
+
+
+class RequestFileCreate(RequestFileBase):
+    pass
+
+
+class RequestFileUpdate(RequestFileBase):
+    updated_at: AwareDatetime
+
+
+class RequestFileRead(RequestFileBase):
+    created_at: AwareDatetime
+    updated_at: AwareDatetime
+
+
+class RequestFileReadPublic(RequestFileRead):
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                generate_example_values(RequestFileRead),
+            ],
+        }
+    }

@@ -5,53 +5,53 @@ from pydantic import UUID1, AwareDatetime
 from app.core.shared.base_schema import BaseSchema, generate_example_values
 
 
-class WebPostBase(BaseSchema):
+class FileBase(BaseSchema):
     id: UUID1
-    title: str
-    cover_image_id: Optional[UUID1]
-    content: str
-    trainer_id: UUID1
+    name: str
+    mime_type: str
+    size: int
+    type: str
     deleted_at: Optional[AwareDatetime]
 
 
-class WebPostCreate(WebPostBase):
+class FileCreate(FileBase):
     pass
 
 
-class WebPostCreatePublic(WebPostCreate):
+class FileCreatePublic(FileCreate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(WebPostCreate),
+                generate_example_values(FileCreate),
             ],
         }
     }
 
 
-class WebPostUpdate(WebPostBase):
+class FileUpdate(FileBase):
     updated_at: AwareDatetime
 
 
-class WebPostUpdatePublic(WebPostUpdate):
+class FileUpdatePublic(FileUpdate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(WebPostUpdate),
+                generate_example_values(FileUpdate),
             ],
         }
     }
 
 
-class WebPostRead(WebPostBase):
+class FileRead(FileBase):
     updated_at: AwareDatetime
     created_at: AwareDatetime
 
 
-class WebPostReadPublic(WebPostRead):
+class FileReadPublic(FileRead):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(WebPostRead),
+                generate_example_values(FileRead),
             ],
         }
     }

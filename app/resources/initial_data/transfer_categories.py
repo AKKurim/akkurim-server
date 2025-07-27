@@ -13,6 +13,7 @@ for category in CATEGORIES:
         "description_en": category["DescriptionEn"],
         "short_description_en": category["ShortDescriptionEn"],
         "sex": category["Sex"],
+        "age": category["Age"],
         "created_at": datetime.utcnow().isoformat() + "+00:00",
         "updated_at": datetime.utcnow().isoformat() + "+00:00",
         "deleted_at": None,

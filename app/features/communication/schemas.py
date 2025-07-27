@@ -1,109 +1,112 @@
 from typing import Optional
 
-from pydantic import UUID1, AfterValidator, AwareDatetime, EmailStr
+from pydantic import UUID1, AwareDatetime
 
 from app.core.shared.base_schema import BaseSchema, generate_example_values
 
 
-class ItemBase(BaseSchema):
+class RequestBase(BaseSchema):
     id: UUID1
-    count: int
+    status: str
+    type: str
+    person_id: UUID1
+    item_id: Optional[UUID1]
     name: str
     description: Optional[str]
-    image_id: UUID1
-    item_type_id: UUID1
-    athlete_id: Optional[UUID1]
     deleted_at: Optional[AwareDatetime]
 
 
-class ItemCreate(ItemBase):
+class RequestCreate(RequestBase):
     pass
 
 
-class ItemCreatePublic(ItemCreate):
+class RequestCreatePublic(RequestCreate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemCreate),
+                generate_example_values(RequestCreate),
             ],
         }
     }
 
 
-class ItemUpdate(ItemBase):
+class RequestUpdate(RequestBase):
     updated_at: AwareDatetime
 
 
-class ItemUpdatePublic(ItemUpdate):
+class RequestUpdatePublic(RequestUpdate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemUpdate),
+                generate_example_values(RequestUpdate),
             ],
         }
     }
 
 
-class ItemRead(ItemBase):
+class RequestRead(RequestBase):
     updated_at: AwareDatetime
     created_at: AwareDatetime
 
 
-class ItemReadPublic(ItemRead):
+class RequestReadPublic(RequestRead):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemRead),
+                generate_example_values(RequestRead),
             ],
         }
     }
 
 
-class ItemTypeBase(BaseSchema):
+class ResponseBase(BaseSchema):
     id: UUID1
-    name: str
-    type: str
+    request_id: UUID1
+    person_type: str
+    person_id: UUID1
+    file_id: Optional[UUID1]
+    description: str
     deleted_at: Optional[AwareDatetime]
 
 
-class ItemTypeCreate(ItemTypeBase):
+class ResponseCreate(ResponseBase):
     pass
 
 
-class ItemTypeCreatePublic(ItemTypeCreate):
+class ResponseCreatePublic(ResponseCreate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemTypeCreate),
+                generate_example_values(ResponseCreate),
             ],
         }
     }
 
 
-class ItemTypeUpdate(ItemTypeBase):
+class ResponseUpdate(ResponseBase):
     updated_at: AwareDatetime
 
 
-class ItemTypeUpdatePublic(ItemTypeUpdate):
+class ResponseUpdatePublic(ResponseUpdate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemTypeUpdate),
+                generate_example_values(ResponseUpdate),
             ],
         }
     }
 
 
-class ItemTypeRead(ItemTypeBase):
+class ResponseRead(ResponseBase):
     updated_at: AwareDatetime
     created_at: AwareDatetime
 
 
-class ItemTypeReadPublic(ItemTypeRead):
+class ResponseReadPublic(ResponseRead):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(ItemTypeRead),
+                generate_example_values(ResponseRead),
             ],
         }
     }

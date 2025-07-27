@@ -6,6 +6,7 @@ CATEGORIES = [
         "ShortDescription": "M",
         "DescriptionEn": "Men",
         "ShortDescriptionEn": "M",
+        "Age": "<100",
     },
     {
         "Id": 20,
@@ -14,6 +15,7 @@ CATEGORIES = [
         "ShortDescription": "U23M",
         "DescriptionEn": "Men U23 ",
         "ShortDescriptionEn": "U23M",
+        "Age": "<23",
     },
     {
         "Id": 30,
@@ -22,6 +24,7 @@ CATEGORIES = [
         "ShortDescription": "Jři",
         "DescriptionEn": "Men U20",
         "ShortDescriptionEn": "J",
+        "Age": "<20",
     },
     {
         "Id": 40,
@@ -30,6 +33,7 @@ CATEGORIES = [
         "ShortDescription": "Dci",
         "DescriptionEn": "Boys U18",
         "ShortDescriptionEn": "U18M",
+        "Age": "<18",
     },
     {
         "Id": 50,
@@ -38,6 +42,7 @@ CATEGORIES = [
         "ShortDescription": "Žci",
         "DescriptionEn": "Boys U16",
         "ShortDescriptionEn": "U16M",
+        "Age": "<16",
     },
     {
         "Id": 60,
@@ -46,6 +51,7 @@ CATEGORIES = [
         "ShortDescription": "Žcm",
         "DescriptionEn": "Boys U14",
         "ShortDescriptionEn": "U14M",
+        "Age": "<14",
     },
     {
         "Id": 70,
@@ -54,6 +60,7 @@ CATEGORIES = [
         "ShortDescription": "V",
         "DescriptionEn": "Masters  Men",
         "ShortDescriptionEn": "MM",
+        "Age": ">35",
     },
     {
         "Id": 100,
@@ -62,6 +69,7 @@ CATEGORIES = [
         "ShortDescription": "Ž",
         "DescriptionEn": "Women",
         "ShortDescriptionEn": "W",
+        "Age": "<100",
     },
     {
         "Id": 105,
@@ -70,6 +78,7 @@ CATEGORIES = [
         "ShortDescription": "U23Z",
         "DescriptionEn": "Women U23",
         "ShortDescriptionEn": "U23W",
+        "Age": "<23",
     },
     {
         "Id": 110,
@@ -78,6 +87,7 @@ CATEGORIES = [
         "ShortDescription": "Jky",
         "DescriptionEn": "Women U20",
         "ShortDescriptionEn": "U20W",
+        "Age": "<20",
     },
     {
         "Id": 120,
@@ -86,6 +96,7 @@ CATEGORIES = [
         "ShortDescription": "Dky",
         "DescriptionEn": "Girls U18",
         "ShortDescriptionEn": "U18W",
+        "Age": "<18",
     },
     {
         "Id": 130,
@@ -94,6 +105,7 @@ CATEGORIES = [
         "ShortDescription": "Žky",
         "DescriptionEn": "Girls U16",
         "ShortDescriptionEn": "U16W",
+        "Age": "<16",
     },
     {
         "Id": 140,
@@ -102,6 +114,7 @@ CATEGORIES = [
         "ShortDescription": "Žkm",
         "DescriptionEn": "Girls U14",
         "ShortDescriptionEn": "U14W",
+        "Age": "<14",
     },
     {
         "Id": 150,
@@ -110,6 +123,7 @@ CATEGORIES = [
         "ShortDescription": "Vky",
         "DescriptionEn": "Masters Women",
         "ShortDescriptionEn": "MW",
+        "Age": ">35",
     },
     {
         "Id": 153,
@@ -118,6 +132,7 @@ CATEGORIES = [
         "ShortDescription": "Mix ml. žc",
         "DescriptionEn": "Mix ml. žactvo",
         "ShortDescriptionEn": "MIXYK",
+        "Age": "<14",
     },
     {
         "Id": 154,
@@ -126,6 +141,7 @@ CATEGORIES = [
         "ShortDescription": "Mix st. žc",
         "DescriptionEn": "Mix st. žactvo",
         "ShortDescriptionEn": "MIXK",
+        "Age": "<16",
     },
     {
         "Id": 155,
@@ -134,6 +150,7 @@ CATEGORIES = [
         "ShortDescription": "EleHm",
         "DescriptionEn": "Mini Kids M",
         "ShortDescriptionEn": "MKM",
+        "Age": "<10",
     },
     {
         "Id": 160,
@@ -142,6 +159,7 @@ CATEGORIES = [
         "ShortDescription": "EleH",
         "DescriptionEn": "Kids M",
         "ShortDescriptionEn": "KM",
+        "Age": "<12",
     },
     {
         "Id": 165,
@@ -150,6 +168,7 @@ CATEGORIES = [
         "ShortDescription": "EleDm",
         "DescriptionEn": "Mini Kids W",
         "ShortDescriptionEn": "MKW",
+        "Age": "<10",
     },
     {
         "Id": 170,
@@ -158,6 +177,7 @@ CATEGORIES = [
         "ShortDescription": "EleD",
         "DescriptionEn": "Kids W",
         "ShortDescriptionEn": "KW",
+        "Age": "<12",
     },
     {
         "Id": 899,
@@ -166,6 +186,7 @@ CATEGORIES = [
         "ShortDescription": "Mix",
         "DescriptionEn": "Mix",
         "ShortDescriptionEn": "Mix",
+        "Age": "<100",
     },
     {
         "Id": 2007,
@@ -174,6 +195,7 @@ CATEGORIES = [
         "ShortDescription": "2007 B",
         "DescriptionEn": "2007 Boys",
         "ShortDescriptionEn": "2007 B",
+        "Age": "==2007",
     },
     {
         "Id": 2008,
@@ -182,6 +204,7 @@ CATEGORIES = [
         "ShortDescription": "2008 B",
         "DescriptionEn": "2008 Boys",
         "ShortDescriptionEn": "2008 B",
+        "Age": "==2008",
     },
     {
         "Id": 2009,
@@ -190,6 +213,7 @@ CATEGORIES = [
         "ShortDescription": "2009 B",
         "DescriptionEn": "2009 Boys",
         "ShortDescriptionEn": "2009 B",
+        "Age": "==2009",
     },
     {
         "Id": 2010,
@@ -198,6 +222,7 @@ CATEGORIES = [
         "ShortDescription": "2010 B",
         "DescriptionEn": "2010 Boys",
         "ShortDescriptionEn": "2010 B",
+        "Age": "==2010",
     },
     {
         "Id": 2011,
@@ -206,6 +231,7 @@ CATEGORIES = [
         "ShortDescription": "2011 B",
         "DescriptionEn": "2011 Boys",
         "ShortDescriptionEn": "2011 B",
+        "Age": "==2011",
     },
     {
         "Id": 2012,
@@ -214,6 +240,7 @@ CATEGORIES = [
         "ShortDescription": "2012 B",
         "DescriptionEn": "2012 Boys",
         "ShortDescriptionEn": "2012 B",
+        "Age": "==2012",
     },
     {
         "Id": 2013,
@@ -222,6 +249,25 @@ CATEGORIES = [
         "ShortDescription": "2013 B",
         "DescriptionEn": "2013 Boys",
         "ShortDescriptionEn": "2013 B",
+        "Age": "==2013",
+    },
+    {
+        "Id": 2014,
+        "Sex": 1,
+        "Description": "2014 Boys",
+        "ShortDescription": "2014 B",
+        "DescriptionEn": "2014 Boys",
+        "ShortDescriptionEn": "2014 B",
+        "Age": "==2014",
+    },
+    {
+        "Id": 2015,
+        "Sex": 1,
+        "Description": "2015 Boys",
+        "ShortDescription": "2015 B",
+        "DescriptionEn": "2015 Boys",
+        "ShortDescriptionEn": "2015 B",
+        "Age": "==2015",
     },
     {
         "Id": 12007,
@@ -230,6 +276,7 @@ CATEGORIES = [
         "ShortDescription": "2007 G",
         "DescriptionEn": "2007 Girls",
         "ShortDescriptionEn": "2007 G",
+        "Age": "==2007",
     },
     {
         "Id": 12008,
@@ -238,6 +285,7 @@ CATEGORIES = [
         "ShortDescription": "2008 G",
         "DescriptionEn": "2008 Girls",
         "ShortDescriptionEn": "2008 G",
+        "Age": "==2008",
     },
     {
         "Id": 12009,
@@ -246,6 +294,7 @@ CATEGORIES = [
         "ShortDescription": "2009 G",
         "DescriptionEn": "2009 Girls",
         "ShortDescriptionEn": "2009 G",
+        "Age": "==2009",
     },
     {
         "Id": 12010,
@@ -254,6 +303,7 @@ CATEGORIES = [
         "ShortDescription": "2010 G",
         "DescriptionEn": "2010 Girls",
         "ShortDescriptionEn": "2010 G",
+        "Age": "==2010",
     },
     {
         "Id": 12011,
@@ -262,6 +312,7 @@ CATEGORIES = [
         "ShortDescription": "2011 G",
         "DescriptionEn": "2011 Girls",
         "ShortDescriptionEn": "2011 G",
+        "Age": "==2011",
     },
     {
         "Id": 12012,
@@ -270,6 +321,7 @@ CATEGORIES = [
         "ShortDescription": "2012 G",
         "DescriptionEn": "2012 Girls",
         "ShortDescriptionEn": "2012 G",
+        "Age": "==2012",
     },
     {
         "Id": 12013,
@@ -278,5 +330,24 @@ CATEGORIES = [
         "ShortDescription": "2013 G",
         "DescriptionEn": "2013 Girls",
         "ShortDescriptionEn": "2013 G",
+        "Age": "==2013",
+    },
+    {
+        "Id": 12014,
+        "Sex": 2,
+        "Description": "2014 Girls",
+        "ShortDescription": "2014 G",
+        "DescriptionEn": "2014 Girls",
+        "ShortDescriptionEn": "2014 G",
+        "Age": "==2014",
+    },
+    {
+        "Id": 12015,
+        "Sex": 2,
+        "Description": "2015 Girls",
+        "ShortDescription": "2015 G",
+        "DescriptionEn": "2015 Girls",
+        "ShortDescriptionEn": "2015 G",
+        "Age": "==2015",
     },
 ]

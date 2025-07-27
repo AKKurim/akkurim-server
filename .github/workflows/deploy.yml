@@ -23,5 +23,5 @@ jobs:
       run: |
           cd ~/docker/akkurim-${{ env.BRANCH_NAME }}/akkurim-server
           git pull origin ${{ env.BRANCH_NAME }}
-          docker compose --project-name akkurim-server-${{ env.BRANCH_NAME }} -f docker-compose.yml build
-          docker compose --project-name akkurim-server-${{ env.BRANCH_NAME }} -f docker-compose.yml up -d
+          #docker compose --project-name akkurim-server-${{ env.BRANCH_NAME }} -f docker-compose.yml build
+          #docker compose --project-name akkurim-server-${{ env.BRANCH_NAME }} -f docker-compose.yml up -d

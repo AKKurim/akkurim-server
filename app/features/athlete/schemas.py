@@ -8,6 +8,7 @@ from app.features.athlete.utils import validate_birth_number
 
 class AthleteBase(BaseSchema):
     id: UUID1
+    bank_number: Optional[str]
     birth_number: Annotated[str, AfterValidator(validate_birth_number)]
     first_name: str
     last_name: str
@@ -19,8 +20,8 @@ class AthleteBase(BaseSchema):
     ean: Optional[str]
     note: Optional[str]
     club_id: str
-    profile_picture: Optional[str]
-    athlete_status_id: UUID1
+    profile_image_id: Optional[UUID1]
+    status: str
     deleted_at: Optional[AwareDatetime]
 
 
@@ -67,56 +68,6 @@ class AthleteReadPublic(AthleteRead):
     }
 
 
-class AthleteStatusBase(BaseSchema):
-    id: UUID1
-    name: str
-    description: Optional[str]
-    deleted_at: Optional[AwareDatetime]
-
-
-class AthleteStatusCreate(AthleteStatusBase):
-    pass
-
-
-class AthleteStatusCreatePublic(AthleteStatusCreate):
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                generate_example_values(AthleteStatusCreate),
-            ],
-        }
-    }
-
-
-class AthleteStatusUpdate(AthleteStatusBase):
-    updated_at: AwareDatetime
-
-
-class AthleteStatusUpdatePublic(AthleteStatusUpdate):
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                generate_example_values(AthleteStatusUpdate),
-            ],
-        }
-    }
-
-
-class AthleteStatusRead(AthleteStatusBase):
-    updated_at: AwareDatetime
-    created_at: AwareDatetime
-
-
-class AthleteStatusReadPublic(AthleteStatusRead):
-    model_config = {
-        "json_schema_extra": {
-            "examples": [
-                generate_example_values(AthleteStatusRead),
-            ],
-        }
-    }
-
-
 class SignUpFormBase(BaseSchema):
     id: UUID1
     birth_number: Annotated[str, AfterValidator(validate_birth_number)]
@@ -136,8 +87,9 @@ class SignUpFormBase(BaseSchema):
     guardian_email2: Optional[EmailStr]
     guardian_phone2: Optional[str]
     note: Optional[str]
-    sign_up_form_status_id: UUID1
+    status: str
     school_year_id: UUID1
+    times_per_week: int
     deleted_at: Optional[AwareDatetime]
 
 
@@ -184,51 +136,52 @@ class SignUpFormReadPublic(SignUpFormRead):
     }
 
 
-class SignUpFormStatusBase(BaseSchema):
-    id: UUID1
-    name: str
-    description: Optional[str]
+class PointsBase(BaseSchema):
+    type: str
+    source_id: UUID1
+    amount: int
+    athlete_id: UUID1
     deleted_at: Optional[AwareDatetime]
 
 
-class SignUpFormStatusCreate(SignUpFormStatusBase):
+class PointsCreate(PointsBase):
     pass
 
 
-class SignUpFormStatusCreatePublic(SignUpFormStatusCreate):
+class PointsCreatePublic(PointsCreate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(SignUpFormStatusCreate),
+                generate_example_values(PointsCreate),
             ],
         }
     }
 
 
-class SignUpFormStatusUpdate(SignUpFormStatusBase):
+class PointsUpdate(PointsBase):
     updated_at: AwareDatetime
 
 
-class SignUpFormStatusUpdatePublic(SignUpFormStatusUpdate):
+class PointsUpdatePublic(PointsUpdate):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(SignUpFormStatusUpdate),
+                generate_example_values(PointsUpdate),
             ],
         }
     }
 
 
-class SignUpFormStatusRead(SignUpFormStatusBase):
+class PointsRead(PointsBase):
     updated_at: AwareDatetime
     created_at: AwareDatetime
 
 
-class SignUpFormStatusReadPublic(SignUpFormStatusRead):
+class PointsReadPublic(PointsRead):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(SignUpFormStatusRead),
+                generate_example_values(PointsRead),
             ],
         }
     }

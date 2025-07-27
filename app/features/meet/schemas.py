@@ -7,6 +7,7 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 
 class DisciplineBase(BaseSchema):
     id: int
+    traditional: int
     discipline_type_id: int
     description: str
     short_description: str
@@ -60,8 +61,11 @@ class DisciplineReadPublic(DisciplineRead):
 
 class DisciplineTypeBase(BaseSchema):
     id: int
+    sort: str
     name: str
     description: Optional[str]
+    name_en: str
+    description_en: Optional[str]
     deleted_at: Optional[AwareDatetime]
 
 
@@ -115,6 +119,7 @@ class CategoryBase(BaseSchema):
     short_description: str
     description_en: str
     short_description_en: str
+    age: str
     deleted_at: Optional[AwareDatetime]
 
 
@@ -162,10 +167,15 @@ class CategoryReadPublic(CategoryRead):
 
 
 class MeetBase(BaseSchema):
-    id: str
+    id: UUID1
+    type: str
+    external_id: Optional[str]  # e.g., for external systems integration
     name: str
     start_at: AwareDatetime
     end_at: AwareDatetime
+    registration_start_at: Optional[AwareDatetime]
+    registration_end_at: Optional[AwareDatetime]
+    registration_limit: Optional[int]  # 0 or 1 if there is some limit (eg team matches)
     location: str
     organizer: str
     deleted_at: Optional[AwareDatetime]
@@ -217,11 +227,11 @@ class MeetReadPublic(MeetRead):
 class MeetEventBase(BaseSchema):
     id: UUID1
     meet_id: str
-    meet_type: str  # race, training, etc
     discipline_id: int
     category_id: int
     start_at: AwareDatetime
     phase: str
+    count: Optional[int]  # Total number of athletes in the event
     deleted_at: Optional[AwareDatetime]
 
 

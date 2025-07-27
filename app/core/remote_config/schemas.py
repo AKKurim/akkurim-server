@@ -8,6 +8,8 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 class RemoteConfigBase(BaseSchema):
     id: int
     urgent_message: Optional[str]
+    show_from: AwareDatetime
+    show_to: AwareDatetime
     minimum_app_version: str
     deleted_at: Optional[AwareDatetime]
 

@@ -6,4 +6,4 @@ alembic upgrade head
 
 cd /app
 
-python -m app.initial_data
+python3 -m app.resources.initial_data.initial_data

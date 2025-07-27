@@ -7,6 +7,7 @@ from app.core.shared.base_schema import BaseSchema, generate_example_values
 
 class GuardianBase(BaseSchema):
     id: UUID1
+    bank_number: Optional[str]
     first_name: str
     last_name: str
     email: EmailStr

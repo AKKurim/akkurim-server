@@ -20,10 +20,11 @@ async def create_athlete_status(name: str, end_of_id: str):
 
 
 if __name__ == "__main__":
-    loop = get_event_loop()
-    loop.run_until_complete(create_athlete_status("Active", "02"))
-    loop.run_until_complete(create_athlete_status("Pending", "03"))
-    loop.run_until_complete(create_athlete_status("Inactive", "04"))
-    loop.run_until_complete(create_athlete_status("Archived", "05"))
+    # loop = get_event_loop()
+    # loop.run_until_complete(create_athlete_status("Active", "02"))
+    # loop.run_until_complete(create_athlete_status("Pending", "03"))
+    # loop.run_until_complete(create_athlete_status("Inactive", "04"))
+    # loop.run_until_complete(create_athlete_status("Archived", "05"))
 
-    loop.close()
+    # loop.close()
+    pass

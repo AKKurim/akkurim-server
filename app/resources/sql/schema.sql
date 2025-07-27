@@ -2,541 +2,778 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
-
-CREATE TABLE IF NOT EXISTS athlete_status
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    description text,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS guardian
-(
-    id uuid NOT NULL,
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    email text NOT NULL,
-    phone text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS item_type
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS item
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    description text,
-    image text,
-    count smallint NOT NULL,
-    item_type_id uuid NOT NULL,
-    athlete_id uuid,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS athlete
-(
-    id uuid NOT NULL,
-    birth_number text NOT NULL,
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    street text NOT NULL,
-    city text NOT NULL,
-    zip text NOT NULL,
-    email text,
-    phone text,
-    ean text,
-    note text,
-    /* club_id text
-       profile_picture text */
-    athlete_status_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-/*
-CREATE TABLE club (
+CREATE TABLE IF NOT EXISTS public.club (
         id text NOT NULL,
         name text NOT NULL,
         description text NOT NULL,
-        created_at timestamp with timezone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp with timezone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    );
-*/
+        created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
 
-CREATE TABLE IF NOT EXISTS athlete_guardian
+CREATE TABLE IF NOT EXISTS public.remote_config
 (
-    athlete_id uuid NOT NULL,
-    guardian_id uuid NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS trainer_status
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    description text,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS trainer
-(
-    id uuid NOT NULL,
-    athlete_id uuid NOT NULL,
-    trainer_status_id uuid NOT NULL,
-    qualification text NOT NULL,
-    salary_per_hour smallint NOT NULL,
-    device_token text,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
+    id int NOT NULL,
+    urgent_message text,
+    show_from timestamp with time zone NOT NULL,
+    show_to timestamp with time zone NOT NULL,
+    minimum_app_version text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE (athlete_id)
+  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
+
+CREATE Schema IF NOT EXISTS tenant_id;
+
+CREATE TABLE IF NOT EXISTS tenant_id.athlete
+(
+    id uuid NOT NULL,
+    bank_number text,
+    birth_number text COLLATE pg_catalog."default" NOT NULL,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name text COLLATE pg_catalog."default" NOT NULL,
+    street text COLLATE pg_catalog."default" NOT NULL,
+    city text COLLATE pg_catalog."default" NOT NULL,
+    zip text COLLATE pg_catalog."default" NOT NULL,
+    email text COLLATE pg_catalog."default",
+    phone text COLLATE pg_catalog."default",
+    ean text COLLATE pg_catalog."default",
+    note text COLLATE pg_catalog."default",
+    club_id text COLLATE pg_catalog."default",
+    profile_image_id uuid COLLATE pg_catalog."default",
+    status text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT athlete_pkey PRIMARY KEY (id),
+    CONSTRAINT athlete_birth_number_key UNIQUE (birth_number),
+    CONSTRAINT athlete_ean_key UNIQUE (ean),
+    CONSTRAINT athlete_email_key UNIQUE (email),
+    CONSTRAINT athlete_phone_key UNIQUE (phone),
+    CONSTRAINT athlete_profile_picture_key UNIQUE (profile_picture)
 );
 
-CREATE TABLE IF NOT EXISTS athlete_item
+CREATE TABLE IF NOT EXISTS tenant_id.athlete_guardian
 (
     athlete_id uuid NOT NULL,
-    item_id uuid NOT NULL
+    guardian_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT athlete_guardian_pkey PRIMARY KEY (athlete_id, guardian_id)
 );
 
-CREATE TABLE IF NOT EXISTS school_year
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS web_post
-(
-    id uuid NOT NULL,
-    title text NOT NULL,
-    content text NOT NULL,
-    trainer_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS "group"
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    description text,
-    training_time_id uuid NOT NULL,
-    school_year_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS group_athlete
-(
-    group_id uuid NOT NULL,
-    athlete_id uuid NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS group_trainer
-(
-    group_id uuid NOT NULL,
-    trainer_id uuid NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS training
-(
-    id uuid NOT NULL,
-    datetime_ timestamp with time zone NOT NULL,
-    group_id uuid NOT NULL,
-    description text,
-    duration_minutes smallint NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS training_time
-(
-    id uuid NOT NULL,
-    day text NOT NULL,
-    summer_time time with time zone NOT NULL,
-    winter_time time with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS training_athlete
-(
-    training_id uuid NOT NULL,
-    athlete_id uuid NOT NULL,
-    presence text NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS training_trainer
-(
-    training_id uuid NOT NULL,
-    trainer_id uuid NOT NULL,
-    presence text
-);
-
-CREATE TABLE IF NOT EXISTS sign_up_form
-(
-    id uuid NOT NULL,
-    birth_number text NOT NULL,
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    street text NOT NULL,
-    city text NOT NULL,
-    zip text NOT NULL,
-    email text,
-    phone text,
-    guardian_first_name1 text NOT NULL,
-    guardian_last_name1 text NOT NULL,
-    guardian_first_name2 text,
-    guardian_last_name2 text,
-    guardian_phone1 text NOT NULL,
-    guardian_email1 text NOT NULL,
-    guardian_phone2 text,
-    guardian_email2 text,
-    note text,
-    sign_up_form_status_id uuid NOT NULL,
-    school_year_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS sign_up_form_status
-(
-    id uuid NOT NULL,
-    name text NOT NULL,
-    description text,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS discipline
-(
-    id smallint NOT NULL,
-    discipline_type_id smallint NOT NULL,
-    description text NOT NULL,
-    short_description text NOT NULL,
-    description_en text NOT NULL,
-    short_description_en text NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS discipline_type
-(
-    id smallint NOT NULL,
-    name text NOT NULL,
-    description text,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS meet
-(
-    id text NOT NULL,
-    name text NOT NULL,
-    start_at timestamp with time zone NOT NULL,
-    end_at timestamp with time zone NOT NULL,
-    location text,
-    organizer text,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS meet_event
-(
-    id uuid NOT NULL,
-    meet_id text NOT NULL,
-    meet_type text NOT NULL,
-    discipline_id smallint NOT NULL,
-    category_id smallint NOT NULL,
-    start_at timestamp with time zone NOT NULL,
-    phase text,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS category
-(
-    id smallint NOT NULL,
-    sex smallint NOT NULL,
-    description text NOT NULL,
-    short_description text NOT NULL,
-    description_en text NOT NULL,
-    short_description_en text NOT NULL,
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS athlete_meet_event
+CREATE TABLE IF NOT EXISTS tenant_id.athlete_meet_event
 (
     athlete_id uuid NOT NULL,
     meet_event_id uuid NOT NULL,
-    result text,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL
+    result text COLLATE pg_catalog."default",
+    wind text COLLATE pg_catalog."default",
+    pb_sb text COLLATE pg_catalog."default",
+    points text COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT athlete_meet_event_pkey PRIMARY KEY (athlete_id, meet_event_id)
 );
 
-CREATE TABLE IF NOT EXISTS athlete_sign_up_form
+CREATE TABLE IF NOT EXISTS tenant_id.athlete_sign_up_form
 (
     athlete_id uuid NOT NULL,
-    sign_up_form_id uuid NOT NULL
+    sign_up_form_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT athlete_sign_up_form_pkey PRIMARY KEY (athlete_id, sign_up_form_id)
 );
 
-ALTER TABLE IF EXISTS item
-    ADD FOREIGN KEY (item_type_id)
-    REFERENCES item_type (id) MATCH SIMPLE
+CREATE TABLE IF NOT EXISTS tenant_id.category
+(
+    id smallint NOT NULL,
+    sex smallint NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    short_description text COLLATE pg_catalog."default" NOT NULL,
+    description_en text COLLATE pg_catalog."default" NOT NULL,
+    short_description_en text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    age text,
+    CONSTRAINT category_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.discipline
+(
+    id smallint NOT NULL,
+    traditional smallint,
+    discipline_type_id smallint NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    short_description text COLLATE pg_catalog."default" NOT NULL,
+    description_en text COLLATE pg_catalog."default" NOT NULL,
+    short_description_en text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT discipline_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.discipline_type
+(
+    id smallint NOT NULL,
+    sort text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    name_en text COLLATE pg_catalog."default",
+    description_en text COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT discipline_type_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id."group"
+(
+    id uuid NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    training_time_id uuid NOT NULL,
+    school_year_id uuid NOT NULL,
+    system smallint,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT group_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.group_athlete
+(
+    group_id uuid NOT NULL,
+    athlete_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT group_athlete_pkey PRIMARY KEY (group_id, athlete_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.group_trainer
+(
+    group_id uuid NOT NULL,
+    trainer_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT group_trainer_pkey PRIMARY KEY (group_id, trainer_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.guardian
+(
+    id uuid NOT NULL,
+    bank_number text,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name text COLLATE pg_catalog."default" NOT NULL,
+    email text COLLATE pg_catalog."default" NOT NULL,
+    phone text COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT guardian_pkey PRIMARY KEY (id),
+    CONSTRAINT guardian_email_key UNIQUE (email),
+    CONSTRAINT guardian_phone_key UNIQUE (phone)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.item
+(
+    id uuid NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default",
+    image_id uuid,
+    count smallint NOT NULL,
+    item_type_id uuid NOT NULL,
+    athlete_id uuid,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT item_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.item_type
+(
+    id uuid NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    type text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT item_type_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.meet
+(
+    id uuid COLLATE pg_catalog."default" NOT NULL,
+    type text NOT NULL,
+    external_id text,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    start_at timestamp with time zone NOT NULL,
+    registration_start_at timestamp with time zone,
+    end_at timestamp with time zone NOT NULL,
+    registration_end_at timestamp with time zone,
+    registration_limit smallint,
+    location text COLLATE pg_catalog."default",
+    organizer text COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT meet_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.meet_event
+(
+    id uuid NOT NULL,
+    meet_id text COLLATE pg_catalog."default" NOT NULL,
+    discipline_id smallint NOT NULL,
+    category_id smallint NOT NULL,
+    start_at timestamp with time zone NOT NULL,
+    phase text COLLATE pg_catalog."default",
+    count smallint,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone,
+    CONSTRAINT meet_event_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.school_year
+(
+    id uuid NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT school_year_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.sign_up_form
+(
+    id uuid NOT NULL,
+    birth_number text COLLATE pg_catalog."default" NOT NULL,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name text COLLATE pg_catalog."default" NOT NULL,
+    street text COLLATE pg_catalog."default" NOT NULL,
+    city text COLLATE pg_catalog."default" NOT NULL,
+    zip text COLLATE pg_catalog."default" NOT NULL,
+    email text COLLATE pg_catalog."default",
+    phone text COLLATE pg_catalog."default",
+    guardian_first_name1 text COLLATE pg_catalog."default" NOT NULL,
+    guardian_last_name1 text COLLATE pg_catalog."default" NOT NULL,
+    guardian_first_name2 text COLLATE pg_catalog."default",
+    guardian_last_name2 text COLLATE pg_catalog."default",
+    guardian_phone1 text COLLATE pg_catalog."default" NOT NULL,
+    guardian_email1 text COLLATE pg_catalog."default" NOT NULL,
+    guardian_phone2 text COLLATE pg_catalog."default",
+    guardian_email2 text COLLATE pg_catalog."default",
+    note text COLLATE pg_catalog."default",
+    status text NOT NULL,
+    school_year_id uuid NOT NULL,
+    times_per_week smallint NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT sign_up_form_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.trainer
+(
+    id uuid NOT NULL,
+    athlete_id uuid NOT NULL,
+    bank_number text,
+    status text NOT NULL,
+    qualification text COLLATE pg_catalog."default" NOT NULL,
+    salary_per_hour smallint NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT trainer_pkey PRIMARY KEY (id),
+    CONSTRAINT trainer_athlete_id_key UNIQUE (athlete_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.training
+(
+    id uuid NOT NULL,
+    start_at timestamp with time zone NOT NULL,
+    group_id uuid NOT NULL,
+    description text COLLATE pg_catalog."default",
+    duration_minutes smallint NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT training_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.training_athlete
+(
+    training_id uuid NOT NULL,
+    athlete_id uuid NOT NULL,
+    presence text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT training_athlete_pkey PRIMARY KEY (training_id, athlete_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.training_time
+(
+    id uuid NOT NULL,
+    day text COLLATE pg_catalog."default" NOT NULL,
+    summer_time time with time zone NOT NULL,
+    winter_time time with time zone NOT NULL,
+    duration_summer smallint NOT NULL,
+    duration_winter smallint NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT training_time_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.training_trainer
+(
+    training_id uuid NOT NULL,
+    trainer_id uuid NOT NULL,
+    presence text COLLATE pg_catalog."default",
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT training_trainer_pkey PRIMARY KEY (training_id, trainer_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.web_post
+(
+    id uuid NOT NULL,
+    title text COLLATE pg_catalog."default" NOT NULL,
+    cover_image_id uuid,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    trainer_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT web_post_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.helper
+(
+    id uuid NOT NULL,
+    status text NOT NULL,
+    bank_number text,
+    first_name text NOT NULL,
+    lats_name text NOT NULL,
+    date_of_birth date,
+    email text NOT NULL,
+    phone text,
+    street text,
+    city text,
+    zip text,
+    qualification text,
+    preferrence text,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.sign_up_form_group
+(
+    sign_up_form_id uuid NOT NULL,
+    group_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (sign_up_form_id, group_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.athlete_registration_meet_event
+(
+    athlete_id uuid NOT NULL,
+    meet_event_id uuid NOT NULL,
+    status text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (athlete_id, meet_event_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.payment
+(
+    id bigserial NOT NULL,
+    type text NOT NULL,
+    amount numeric NOT NULL,
+    status text NOT NULL,
+    from_id uuid,
+    to_id uuid,
+    description text,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.request
+(
+    id uuid NOT NULL,
+    type text NOT NULL,
+    status text NOT NULL,
+    person_id uuid NOT NULL,
+    item_id uuid,
+    name text NOT NULL,
+    description text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.points
+(
+    type text NOT NULL,
+    source_id uuid NOT NULL,
+    amount bigint NOT NULL,
+    athlete_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (type, source_id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.file
+(
+    id uuid NOT NULL,
+    name text NOT NULL,
+    size bigint NOT NULL,
+    mime_type text NOT NULL,
+    type text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.response
+(
+    id uuid NOT NULL,
+    request_id uuid NOT NULL,
+    person_type text NOT NULL,
+    person_id uuid NOT NULL,
+    file_id uuid,
+    description text NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.request_file
+(
+    request_id uuid NOT NULL,
+    file_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone
+);
+
+/* 
+Add foreign keys 
+*/
+
+ALTER TABLE IF EXISTS tenant_id.athlete
+    ADD FOREIGN KEY (image_id)
+    REFERENCES tenant_id.file (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS athlete
-    ADD FOREIGN KEY (athlete_status_id)
-    REFERENCES athlete_status (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian
+    ADD CONSTRAINT athlete_guardian_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS athlete_guardian
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian
+    ADD CONSTRAINT athlete_guardian_guardian_id_fkey FOREIGN KEY (guardian_id)
+    REFERENCES tenant_id.guardian (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS athlete_guardian
-    ADD FOREIGN KEY (guardian_id)
-    REFERENCES guardian (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event
+    ADD CONSTRAINT athlete_meet_event_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS trainer
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event
+    ADD CONSTRAINT athlete_meet_event_meet_event_id_fkey FOREIGN KEY (meet_event_id)
+    REFERENCES tenant_id.meet_event (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS trainer
-    ADD FOREIGN KEY (trainer_status_id)
-    REFERENCES trainer_status (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form
+    ADD CONSTRAINT athlete_sign_up_form_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS athlete_item
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form
+    ADD CONSTRAINT athlete_sign_up_form_sign_up_form_id_fkey FOREIGN KEY (sign_up_form_id)
+    REFERENCES tenant_id.sign_up_form (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS athlete_item
-    ADD FOREIGN KEY (item_id)
-    REFERENCES item (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.discipline
+    ADD CONSTRAINT discipline_discipline_type_id_fkey FOREIGN KEY (discipline_type_id)
+    REFERENCES tenant_id.discipline_type (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS web_post
-    ADD FOREIGN KEY (trainer_id)
-    REFERENCES trainer (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id."group"
+    ADD CONSTRAINT group_school_year_id_fkey FOREIGN KEY (school_year_id)
+    REFERENCES tenant_id.school_year (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "group"
-    ADD FOREIGN KEY (school_year_id)
-    REFERENCES school_year (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id."group"
+    ADD CONSTRAINT group_training_time_id_fkey FOREIGN KEY (training_time_id)
+    REFERENCES tenant_id.training_time (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS "group"
-    ADD FOREIGN KEY (training_time_id)
-    REFERENCES training_time (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.group_athlete
+    ADD CONSTRAINT group_athlete_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS group_athlete
-    ADD FOREIGN KEY (group_id)
-    REFERENCES "group" (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.group_athlete
+    ADD CONSTRAINT group_athlete_group_id_fkey FOREIGN KEY (group_id)
+    REFERENCES tenant_id."group" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS group_athlete
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.group_trainer
+    ADD CONSTRAINT group_trainer_group_id_fkey FOREIGN KEY (group_id)
+    REFERENCES tenant_id."group" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS group_trainer
-    ADD FOREIGN KEY (group_id)
-    REFERENCES "group" (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.group_trainer
+    ADD CONSTRAINT group_trainer_trainer_id_fkey FOREIGN KEY (trainer_id)
+    REFERENCES tenant_id.trainer (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS group_trainer
-    ADD FOREIGN KEY (trainer_id)
-    REFERENCES trainer (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.item
+    ADD CONSTRAINT item_item_type_id_fkey FOREIGN KEY (item_type_id)
+    REFERENCES tenant_id.item_type (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS training
-    ADD FOREIGN KEY (group_id)
-    REFERENCES "group" (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.meet_event
+    ADD CONSTRAINT meet_event_category_id_fkey FOREIGN KEY (category_id)
+    REFERENCES tenant_id.category (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS training_athlete
-    ADD FOREIGN KEY (training_id)
-    REFERENCES training (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.meet_event
+    ADD CONSTRAINT meet_event_discipline_id_fkey FOREIGN KEY (discipline_id)
+    REFERENCES tenant_id.discipline (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS training_athlete
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.meet_event
+    ADD CONSTRAINT meet_event_meet_id_fkey FOREIGN KEY (meet_id)
+    REFERENCES tenant_id.meet (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS training_trainer
-    ADD FOREIGN KEY (training_id)
-    REFERENCES training (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.sign_up_form
+    ADD CONSTRAINT sign_up_form_school_year_id_fkey FOREIGN KEY (school_year_id)
+    REFERENCES tenant_id.school_year (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS training_trainer
-    ADD FOREIGN KEY (trainer_id)
-    REFERENCES trainer (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.trainer
+    ADD CONSTRAINT trainer_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+CREATE INDEX IF NOT EXISTS trainer_athlete_id_key
+    ON tenant_id.trainer(athlete_id);
+
+
+ALTER TABLE IF EXISTS tenant_id.training
+    ADD CONSTRAINT training_group_id_fkey FOREIGN KEY (group_id)
+    REFERENCES tenant_id."group" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS sign_up_form
-    ADD FOREIGN KEY (sign_up_form_status_id)
-    REFERENCES sign_up_form_status (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.training_athlete
+    ADD CONSTRAINT training_athlete_athlete_id_fkey FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS sign_up_form
-    ADD FOREIGN KEY (school_year_id)
-    REFERENCES school_year (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.training_athlete
+    ADD CONSTRAINT training_athlete_training_id_fkey FOREIGN KEY (training_id)
+    REFERENCES tenant_id.training (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS discipline
-    ADD FOREIGN KEY (discipline_type_id)
-    REFERENCES discipline_type (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.training_trainer
+    ADD CONSTRAINT training_trainer_trainer_id_fkey FOREIGN KEY (trainer_id)
+    REFERENCES tenant_id.trainer (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS meet_event
-    ADD FOREIGN KEY (category_id)
-    REFERENCES category (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.training_trainer
+    ADD CONSTRAINT training_trainer_training_id_fkey FOREIGN KEY (training_id)
+    REFERENCES tenant_id.training (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS meet_event
-    ADD FOREIGN KEY (discipline_id)
-    REFERENCES discipline (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.web_post
+    ADD CONSTRAINT web_post_trainer_id_fkey FOREIGN KEY (trainer_id)
+    REFERENCES tenant_id.trainer (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS meet_event
-    ADD FOREIGN KEY (meet_id)
-    REFERENCES meet (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS tenant_id.web_post
+    ADD FOREIGN KEY (cover_image_id)
+    REFERENCES tenant_id.file (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS meet_event
-    ADD FOREIGN KEY (meet_type)
-    REFERENCES meet (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS athlete_meet_event
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS athlete_meet_event
-    ADD FOREIGN KEY (meet_event_id)
-    REFERENCES meet_event (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS athlete_sign_up_form
-    ADD FOREIGN KEY (athlete_id)
-    REFERENCES athlete (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS athlete_sign_up_form
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group
     ADD FOREIGN KEY (sign_up_form_id)
-    REFERENCES sign_up_form (id) MATCH SIMPLE
+    REFERENCES tenant_id.sign_up_form (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group
+    ADD FOREIGN KEY (group_id)
+    REFERENCES tenant_id."group" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event
+    ADD FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event
+    ADD FOREIGN KEY (meet_event_id)
+    REFERENCES tenant_id.meet_event (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.request
+    ADD FOREIGN KEY (item_id)
+    REFERENCES tenant_id.item (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.points
+    ADD FOREIGN KEY (athlete_id)
+    REFERENCES tenant_id.athlete (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.response
+    ADD FOREIGN KEY (request_id)
+    REFERENCES tenant_id.request (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.response
+    ADD FOREIGN KEY (file_id)
+    REFERENCES tenant_id.file (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.request_file
+    ADD FOREIGN KEY (request_id)
+    REFERENCES tenant_id.request (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS tenant_id.request_file
+    ADD FOREIGN KEY (file_id)
+    REFERENCES tenant_id.file (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

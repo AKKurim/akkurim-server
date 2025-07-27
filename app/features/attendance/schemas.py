@@ -12,6 +12,7 @@ class GroupBase(BaseSchema):
     description: str
     training_time_id: UUID1
     school_year_id: UUID1
+    system: int
     deleted_at: Optional[AwareDatetime]
 
 
@@ -61,7 +62,7 @@ class GroupReadPublic(GroupRead):
 class TrainingBase(BaseSchema):
     id: UUID1
     group_id: UUID1
-    datetime_: AwareDatetime
+    start_at: AwareDatetime
     duration_minutes: int
     description: str
     deleted_at: Optional[AwareDatetime]
@@ -115,6 +116,8 @@ class TrainingTimeBase(BaseSchema):
     day: str
     summer_time: time
     winter_time: time
+    duration_summer: int
+    duration_winter: int
     deleted_at: Optional[AwareDatetime]
 
 
