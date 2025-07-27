@@ -13,13 +13,7 @@ from app.core.utils.sql_utils import (
     generate_sql_read,
     generate_sql_read_with_join_table,
 )
-from app.features.athlete.schemas import (
-    AthleteCreate,
-    AthleteRead,
-    AthleteStatusCreate,
-    AthleteStatusRead,
-    AthleteUpdate,
-)
+from app.features.athlete.schemas import AthleteCreate, AthleteRead, AthleteUpdate
 from app.features.guardian.schemas import GuardianRead
 
 
@@ -93,45 +87,6 @@ class AthleteService(DefaultService):
         return await super().get_all_objects_updated_after(
             tenant_id, last_updated_at, db
         )
-
-    async def get_all_statuses(
-        self, tenant_id: str, db: Connection
-    ) -> list[AthleteStatusRead]:
-        query, values = generate_sql_read(
-            tenant_id,
-            "athlete_status",
-            AthleteStatusRead.model_fields.keys(),
-        )
-        res = await db.fetch(query, *values)
-        return [convert_uuid_to_str(dict(r)) for r in res]
-
-    async def create_status(
-        self,
-        tenant_id: str,
-        status: AthleteStatusCreate,
-        db: Connection,
-    ) -> AthleteStatusRead:
-        query, values = generate_sql_insert_with_returning(
-            tenant_id,
-            "athlete_status",
-            status,
-            AthleteStatusRead.model_fields.keys(),
-        )
-        res = await db.fetchrow(query, *values)
-
-        event = SSEEvent(
-            tenant=tenant_id,
-            table_name="athlete_status",
-            endpoint="/athlete/status/",  # update all statuses since it we dont have a specific endpoint
-            local_action=LocalActionEnum.upsert,
-            id=str(status["id"]),
-        )
-        await global_broadcast.publish(
-            channel="update",
-            message=orjson.dumps(event.model_dump()).decode("utf-8"),
-        )
-
-        return convert_uuid_to_str(dict(res))
 
     async def get_guardians_for_athlete(
         self, tenant_id: str, athlete_id: UUID1, db: Connection

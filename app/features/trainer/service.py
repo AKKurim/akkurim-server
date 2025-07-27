@@ -10,12 +10,7 @@ from app.core.utils.sql_utils import (
     generate_sql_insert_with_returning,
     generate_sql_read,
 )
-from app.features.trainer.schemas import (
-    TrainerCreate,
-    TrainerRead,
-    TrainerStatusRead,
-    TrainerUpdate,
-)
+from app.features.trainer.schemas import TrainerCreate, TrainerRead, TrainerUpdate
 
 
 class TrainerService(DefaultService):
@@ -83,44 +78,3 @@ class TrainerService(DefaultService):
             tenant_id,
             db,
         )
-
-    async def get_all_statuses(
-        self,
-        tenant_id: str,
-        db: Connection,
-    ) -> list[TrainerStatusRead]:
-        query, values = generate_sql_read(
-            tenant_id,
-            "trainer_status",
-            TrainerStatusRead.model_fields.keys(),
-        )
-        res = await db.fetch(query, *values)
-        return [convert_uuid_to_str(dict(r)) for r in res]
-
-    async def create_status(
-        self,
-        tenant_id: str,
-        status: TrainerStatusRead,
-        db: Connection,
-    ) -> TrainerStatusRead:
-        query, values = generate_sql_insert_with_returning(
-            tenant_id,
-            "trainer_status",
-            status,
-            TrainerStatusRead.model_fields.keys(),
-        )
-        res = await db.fetchrow(query, *values)
-
-        event = SSEEvent(
-            tenant_id=tenant_id,
-            table_name="trainer_status",
-            endpoint="/trainer/status/",  # update all statuses since it we dont have a specific endpoint
-            local_action=LocalActionEnum.upsert,
-            id=str(res["id"]),
-        )
-        await global_broadcast.publish(
-            channel="update",
-            message=orjson.dumps(event.model_dump()).decode("utf-8"),
-        )
-
-        return convert_uuid_to_str(dict(res))

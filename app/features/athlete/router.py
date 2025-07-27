@@ -14,8 +14,6 @@ from app.core.shared.database import get_db
 from app.features.athlete.schemas import (
     AthleteCreatePublic,
     AthleteReadPublic,
-    AthleteStatusCreatePublic,
-    AthleteStatusReadPublic,
     AthleteUpdatePublic,
 )
 from app.features.athlete.service import AthleteService
@@ -138,56 +136,6 @@ async def read_athletes(
         db,
     )
     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
-
-
-# @router.get(
-#     "/sync/",
-#     response_model=list[AthleteReadPublic],
-# )
-# async def read_athletes_updated_after(
-#     last_updated_at: AwareDatetime,
-#     auth_data: trainer_dep,
-#     db: db_dep,
-#     service: service_dep,
-# ) -> list[AthleteReadPublic]:
-#     athletes = await service.get_all_athletes_updated_after(
-#         auth_data.tenant_id,
-#         last_updated_at,
-#         db,
-#     )
-#     return ORJSONResponse(athletes, status_code=status.HTTP_200_OK)
-
-
-@router.get(
-    "/status/",
-    response_model=list[AthleteStatusReadPublic],
-)
-async def read_statues(
-    auth_data: trainer_dep,
-    db: db_dep,
-    service: service_dep,
-) -> list[AthleteStatusReadPublic]:
-    statuses = await service.get_all_statuses(auth_data.tenant_id, db)
-    return ORJSONResponse(statuses, status_code=status.HTTP_200_OK)
-
-
-@router.post(
-    "/status/",
-    response_model=AthleteStatusReadPublic,
-    responses={201: {"description": "Created"}},
-)
-async def create_status(
-    status_: AthleteStatusCreatePublic,
-    auth_data: admin_dep,
-    db: db_dep,
-    service: service_dep,
-) -> AthleteStatusReadPublic:
-    created_status = await service.create_status(
-        auth_data.tenant_id,
-        status_.model_dump(),
-        db,
-    )
-    return ORJSONResponse(created_status, status_code=status.HTTP_201_CREATED)
 
 
 @router.get(

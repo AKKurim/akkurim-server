@@ -14,8 +14,6 @@ from app.core.shared.database import get_db
 from app.features.trainer.schemas import (
     TrainerCreatePublic,
     TrainerReadPublic,
-    TrainerStatusCreatePublic,
-    TrainerStatusReadPublic,
     TrainerUpdatePublic,
 )
 from app.features.trainer.service import TrainerService
@@ -130,35 +128,3 @@ async def read_trainers(
 ) -> list[TrainerReadPublic]:
     trainers = await service.get_all_trainers(auth_data.tenant_id, db)
     return ORJSONResponse(trainers, status_code=status.HTTP_200_OK)
-
-
-@router.get(
-    "/status/",
-    response_model=list[TrainerReadPublic],
-)
-async def read_statuses(
-    auth_data: trainer_dep,
-    db: db_dep,
-    service: service_dep,
-) -> list[TrainerStatusReadPublic]:
-    statuses = await service.get_all_statuses(auth_data.tenant_id, db)
-    return ORJSONResponse(statuses, status_code=status.HTTP_200_OK)
-
-
-@router.post(
-    "/status/",
-    response_model=TrainerStatusReadPublic,
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_status(
-    status_: TrainerStatusCreatePublic,
-    auth_data: admin_dep,
-    db: db_dep,
-    service: service_dep,
-) -> TrainerStatusReadPublic:
-    new_status = await service.create_status(
-        auth_data.tenant_id,
-        status_.model_dump(),
-        db,
-    )
-    return ORJSONResponse(new_status, status_code=status.HTTP_201_CREATED)
