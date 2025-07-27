@@ -482,7 +482,7 @@ Add foreign keys
 */
 
 ALTER TABLE IF EXISTS tenant_id.athlete
-    ADD FOREIGN KEY (image_id)
+    ADD FOREIGN KEY (profile_image_id)
     REFERENCES tenant_id.file (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
