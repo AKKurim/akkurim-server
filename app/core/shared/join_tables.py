@@ -243,30 +243,30 @@ class AthleteSignUpFormReadPublic(AthleteSignUpFormRead):
     }
 
 
-class SignUpGroupFormBase(BaseSchema):
+class SignUpFormGroupBase(BaseSchema):
     sign_up_form_id: UUID1
     group_id: UUID1
     deleted_at: Optional[AwareDatetime]
 
 
-class SignUpGroupFormCreate(SignUpGroupFormBase):
+class SignUpFormGroupCreate(SignUpFormGroupBase):
     pass
 
 
-class SignUpGroupFormUpdate(SignUpGroupFormBase):
+class SignUpFormGroupUpdate(SignUpFormGroupBase):
     updated_at: AwareDatetime
 
 
-class SignUpGroupFormRead(SignUpGroupFormBase):
+class SignUpFormGroupRead(SignUpFormGroupBase):
     created_at: AwareDatetime
     updated_at: AwareDatetime
 
 
-class SignUpGroupFormReadPublic(SignUpGroupFormRead):
+class SignUpFormGroupReadPublic(SignUpFormGroupRead):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                generate_example_values(SignUpGroupFormRead),
+                generate_example_values(SignUpFormGroupRead),
             ],
         }
     }
