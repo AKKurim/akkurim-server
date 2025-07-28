@@ -20,31 +20,31 @@ async def main():
             # discipline types
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (-1, NONE, 'nezařazeno', '', 'uncategorized', '', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (-1, 'NONE', 'nezařazeno', '', 'uncategorized', '', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (1, ASC, 'běhy', 'běhy+překážky', 'runs', 'runs+hurdles', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (1, 'ASC', 'běhy', 'běhy+překážky', 'runs', 'runs+hurdles', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (2, DESC, 'vertikální skoky', 'vertikální skoky+běhy na čas', 'vertical jumps', 'vertical jumps+timed runs', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (2, 'DESC', 'vertikální skoky', 'vertikální skoky+běhy na čas', 'vertical jumps', 'vertical jumps+timed runs', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (3, ASC, 'štafety', 'štafetové běhy', 'relays', 'run relays', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (3, 'ASC', 'štafety', 'štafetové běhy', 'relays', 'run relays', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (4, DESC, 'víceboje', '', 'combined events', '', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (4, 'DESC', 'víceboje', '', 'combined events', '', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (5, DESC, 'horizontální skoky', '', 'horizontal jumps', '', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (5, 'DESC', 'horizontální skoky', '', 'horizontal jumps', '', null) ON CONFLICT (id) DO NOTHING;"
             )
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
-                + " VALUES (6, DESC, 'hody', '', 'throws', '', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES (6, 'DESC', 'hody', '', 'throws', '', null) ON CONFLICT (id) DO NOTHING;"
             )
             for category in CATEGORIES:
                 await db.execute(
