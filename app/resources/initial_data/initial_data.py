@@ -47,7 +47,7 @@ async def main():
                 + " VALUES (6, 'DESC', 'hody', '', 'throws', '', null) ON CONFLICT (id) DO NOTHING;"
             )
             for category in CATEGORIES:
-                await db.execute(
+                await db_.execute(
                     "INSERT into kurim.category (id, descritpion, short_description, description_en, short_description_en, sex, age, deleted_at) "
                     + " VALUES ($1, $2, $3, $4, $5, $6, $7, null) ON CONFLICT (id) DO NOTHING; ",
                     category["Id"],
@@ -59,7 +59,7 @@ async def main():
                     category["Age"],
                 )
             for discipline in DISCIPLINES:
-                await db.execute(
+                await db_.execute(
                     "INSERT into kurim.discipline (id, description, short_description, description_en, short_description_en, discipline_type_id, traditional, deleted_at) "
                     + " VALUES ($1, $2, $3, $4, $5, $6, 1, null) ON CONFLICT (id) DO NOTHING; ",
                     discipline["Id"],
