@@ -1,10 +1,10 @@
 from asyncio import get_event_loop
 
 from asyncpg import Connection
-from list_of_categories import CATEGORIES
-from list_of_disciplines import DISCIPLINES
 
 from app.core.shared.database import db
+from app.resources.initial_data.list_of_categories import CATEGORIES
+from app.resources.initial_data.list_of_disciplines import DISCIPLINES
 
 
 async def main():
