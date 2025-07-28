@@ -48,7 +48,7 @@ async def main():
             )
             for category in CATEGORIES:
                 await db_.execute(
-                    "INSERT into kurim.category (id, descritpion, short_description, description_en, short_description_en, sex, age, deleted_at) "
+                    "INSERT into kurim.category (id, description, short_description, description_en, short_description_en, sex, age, deleted_at) "
                     + " VALUES ($1, $2, $3, $4, $5, $6, $7, null) ON CONFLICT (id) DO NOTHING; ",
                     category["Id"],
                     category["Description"],
