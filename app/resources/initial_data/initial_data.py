@@ -5,6 +5,7 @@ from asyncpg import Connection
 from app.core.shared.database import db
 from app.resources.initial_data.list_of_categories import CATEGORIES
 from app.resources.initial_data.list_of_disciplines import DISCIPLINES
+from app.resources.initial_data.list_of_item_types import ITEM_TYPES
 
 
 async def main():
@@ -68,6 +69,14 @@ async def main():
                     discipline["DescriptionEn"],
                     discipline["ShortDescriptionEn"],
                     discipline["DisciplineType"],
+                )
+            for item_type in ITEM_TYPES:
+                await db_.execute(
+                    "INSERT into kurim.item_type (id, name, type, deleted_at) "
+                    + " VALUES ($1, $2, $3, null) ON CONFLICT (id) DO NOTHING; ",
+                    item_type["id"],
+                    item_type["name"],
+                    item_type["type"],
                 )
     except Exception as e:
         print(e)
