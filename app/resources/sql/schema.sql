@@ -438,7 +438,7 @@ CREATE TABLE IF NOT EXISTS tenant_id.points
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    PRIMARY KEY (type, source_id)
+    PRIMARY KEY (type, source_id, athlete_id)
 );
 
 CREATE TABLE IF NOT EXISTS tenant_id.file
