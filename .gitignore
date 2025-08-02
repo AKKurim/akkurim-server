@@ -9,3 +9,4 @@ htmlcov
 test_file.py
 .env
 data/*
+/app/resources/initial_data/*.xlsx
