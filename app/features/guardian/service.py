@@ -3,7 +3,7 @@ from datetime import datetime
 from asyncpg import Connection
 from pydantic import UUID1
 
-from app.core.shared.exceptions import UniqueViolationErrorHTTP
+from app.core.shared.exceptions import AlreadyExistsError, UniqueViolationErrorHTTP
 from app.core.utils.default_service import DefaultService
 from app.core.utils.sql_utils import convert_uuid_to_str
 from app.features.guardian.schemas import GuardianCreate, GuardianRead, GuardianUpdate
@@ -42,7 +42,7 @@ class GuardianService(DefaultService):
                 guardian,
                 db,
             )
-        except UniqueViolationErrorHTTP:
+        except (UniqueViolationErrorHTTP, AlreadyExistsError):
             res = await db.execute(
                 f"SELECT * FROM {tenant_id}.guardian WHERE email = $1",
                 guardian.email,

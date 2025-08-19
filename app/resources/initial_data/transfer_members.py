@@ -76,12 +76,6 @@ for row in df.iterrows():
         # search in guardian_list for a same email
         found = False
         for guardian in guardian_list:
-            print(
-                "Checking guardian",
-                guardian["email"],
-                row[1]["E-mail zákonného zástupce"],
-                guardian["email"] == row[1]["E-mail zákonného zástupce"],
-            )
             if guardian["email"] == row[1]["E-mail zákonného zástupce"]:
                 guardian["athlete_ids"].append(athl_id)
                 found = True
