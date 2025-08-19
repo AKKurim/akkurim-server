@@ -18,6 +18,14 @@ async def main():
                 + " VALUES (0, '', '2024-01-01T00:00:00+00:00', '2024-12-31T23:59:59+00:00', '2.4.0', null)"
                 + " ON CONFLICT (id) DO NOTHING;"
             )
+            await db_.execute(
+                "INSERT INTO kurim.school_year (id, name, deleted_at) "
+                + " VALUES ('537d3234-7d18-11f0-8de9-0242ac120002', '2024/2025', null) ON CONFLICT (id) DO NOTHING;"
+            )
+            await db_.execute(
+                "INSERT INTO kurim.school_year (id, name, deleted_at) "
+                + " VALUES ('537d3235-7d18-11f0-8de9-0242ac120002', '2024/2025', null) ON CONFLICT (id) DO NOTHING;"
+            )
             # discipline types
             await db_.execute(
                 "INSERT INTO kurim.discipline_type (id, sort, name, description, name_en, description_en, deleted_at) "
