@@ -43,7 +43,7 @@ class GuardianService(DefaultService):
                 db,
             )
         except (UniqueViolationErrorHTTP, AlreadyExistsError):
-            res = await db.execute(
+            res = await db.fetchrow(
                 f"SELECT * FROM {tenant_id}.guardian WHERE email = $1",
                 guardian["email"],
             )
