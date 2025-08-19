@@ -30,7 +30,7 @@ for row in df.iterrows():
         "note": None,
         "phone": (
             str(int(row[1]["Telefon"]))
-            if row[1]["Telefon"] != "" and type(row[1]["Telefon"]) is str
+            if row[1]["Telefon"] != "" and str(row[1]["Telefon"]) != "nan"
             else None
         ),
         "profile_image_id": None,
@@ -69,32 +69,42 @@ for row in df.iterrows():
         res = requests.post(trainer_url, json=trainer_data)
         print(res.text)
 
-    if row[1]["E-mail zákonného zástupce"] != "":
+    if (
+        row[1]["E-mail zákonného zástupce"] != ""
+        and str(row[1]["E-mail zákonného zástupce"]) != "nan"
+    ):
         # search in guardian_list for a same email
+        found = False
         for guardian in guardian_list:
+            print(
+                "Checking guardian",
+                guardian["email"],
+                row[1]["E-mail zákonného zástupce"],
+                guardian["email"] == row[1]["E-mail zákonného zástupce"],
+            )
             if guardian["email"] == row[1]["E-mail zákonného zástupce"]:
                 guardian["athlete_ids"].append(athl_id)
+                found = True
                 break
-        guardian_data = {
-            "athlete_ids": [athl_id],
-            "bank_number": None,
-            "email": row[1]["E-mail zákonného zástupce"],
-            "first_name": "-",
-            "id": str(uuid.uuid1()),
-            "last_name": "-",
-            "phone": (
-                str(int(row[1]["Telefon"]))
-                if row[1]["Telefon"] != "" and type(row[1]["Telefon"]) is str
-                else None
-            ),
-            "deleted_at": None,
-        }
-        guardian_list.append(guardian_data)
+        if not found:
+            guardian_data = {
+                "athlete_ids": [athl_id],
+                "bank_number": None,
+                "email": row[1]["E-mail zákonného zástupce"],
+                "first_name": "-",
+                "id": str(uuid.uuid1()),
+                "last_name": "-",
+                "phone": (
+                    str(int(row[1]["Telefon zákonného zástupce"]))
+                    if row[1]["Telefon zákonného zástupce"] != ""
+                    and str(row[1]["Telefon zákonného zástupce"]) != "nan"
+                    else None
+                ),
+                "deleted_at": None,
+            }
+            guardian_list.append(guardian_data)
 
 for guardian in guardian_list:
-    for key, value in guardian.items():
-        if value == "nan" or issubclass(float, type(value)):
-            guardian[key] = None
     for value in guardian["athlete_ids"]:
         url = guardian_url + f"/{value}"
         res = requests.post(url, json=guardian)

@@ -3,6 +3,7 @@ from datetime import datetime
 from asyncpg import Connection
 from pydantic import UUID1
 
+from app.core.shared.exceptions import UniqueViolationErrorHTTP
 from app.core.utils.default_service import DefaultService
 from app.core.utils.sql_utils import convert_uuid_to_str
 from app.features.guardian.schemas import GuardianCreate, GuardianRead, GuardianUpdate
@@ -35,11 +36,17 @@ class GuardianService(DefaultService):
         athlete_id: UUID1,
         db: Connection,
     ) -> GuardianRead:
-        res = await super().create_object(
-            tenant_id,
-            guardian,
-            db,
-        )
+        try:
+            res = await super().create_object(
+                tenant_id,
+                guardian,
+                db,
+            )
+        except UniqueViolationErrorHTTP:
+            res = await db.execute(
+                f"SELECT * FROM {tenant_id}.guardian WHERE email = $1",
+                guardian.email,
+            )
         await db.execute(
             f"INSERT INTO {tenant_id}.athlete_guardian (guardian_id, athlete_id) VALUES ($1, $2)",
             res["id"],
