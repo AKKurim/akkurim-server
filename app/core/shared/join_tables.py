@@ -188,6 +188,7 @@ class AthleteMeetEventBase(BaseSchema):
     wind: Optional[str] = None
     pb_sb: Optional[str] = None
     points: Optional[str] = None
+    bib: Optional[str] = None
     deleted_at: Optional[AwareDatetime]
 
 
