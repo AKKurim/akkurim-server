@@ -15,6 +15,7 @@ def supertokens_init():
             api_domain=settings.API_DOMAIN,
             website_domain=settings.WEBSITE_DOMAIN,
             api_base_path="/auth",
+            website_base_path="/auth",
         ),
         supertokens_config=SupertokensConfig(
             connection_uri=settings.SUPERTOKENS_CONNECTION_URI, api_key=settings.API_KEY
