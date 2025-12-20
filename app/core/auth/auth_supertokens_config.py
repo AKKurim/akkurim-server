@@ -24,6 +24,7 @@ def supertokens_init():
             session.init(
                 expose_access_token_to_frontend_in_cookie_based_auth=True,
                 cookie_same_site="none",  # to allow cross-site cookies
+                cookie_secure=True,  # to allow cookies over HTTPS only
             ),
             emailpassword.init(),
             dashboard.init(admins=[settings.DASHBOARD_ADMIN]),
