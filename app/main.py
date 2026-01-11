@@ -1,7 +1,8 @@
 import asyncio
 from contextlib import asynccontextmanager
+from typing import Annotated
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from supertokens_python import get_all_cors_headers
@@ -10,6 +11,8 @@ from supertokens_python.framework.fastapi import (
 )
 
 from app.core.auth.auth_supertokens_config import supertokens_init
+from app.core.auth.dependecies import verify_and_get_auth_data
+from app.core.auth.schemas import AuthData
 from app.core.config import settings
 from app.core.logging import logger
 from app.core.logging import router as log_router
@@ -81,6 +84,20 @@ app.include_router(meet_event_router, prefix=settings.API_V1_PREFIX)
 def read_root():
     content = {"status": "working", "app_name": settings.APP_NAME}
     return ORJSONResponse(content, 200)
+
+
+auth_data_dep = Annotated[AuthData, Depends(verify_and_get_auth_data)]
+
+
+@app.get(
+    "/auth-data/",
+    response_class=ORJSONResponse,
+    response_model=AuthData,
+)
+async def get_auth_data(
+    auth_data: auth_data_dep,
+):
+    return ORJSONResponse(auth_data.model_dump(), 200)
 
 
 # for testing purposes

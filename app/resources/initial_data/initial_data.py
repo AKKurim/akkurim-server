@@ -24,7 +24,7 @@ async def main():
             )
             await db_.execute(
                 "INSERT INTO kurim.school_year (id, name, deleted_at) "
-                + " VALUES ('537d3235-7d18-11f0-8de9-0242ac120002', '2024/2025', null) ON CONFLICT (id) DO NOTHING;"
+                + " VALUES ('537d3235-7d18-11f0-8de9-0242ac120002', '2025/2026', null) ON CONFLICT (id) DO NOTHING;"
             )
             # discipline types
             await db_.execute(
