@@ -1,7 +1,16 @@
+import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import Connection, engine_from_config, pool, text
+from sqlalchemy.ext.asyncio import async_engine_from_config
+from sqlmodel import SQLModel
+
+# Import all models so they are registered on SQLModel.metadata for
+# Alembic autogenerate support.
+import app.models  # noqa: F401
+from app.core.config import settings
+from app.core.database import db_settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,9 +26,8 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
-from app.core.config import settings  # noqa
 
-target_metadata = None
+target_metadata = SQLModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -28,9 +36,7 @@ target_metadata = None
 
 
 def get_url():
-    url_parts = settings.DATABASE_URL.split("://")
-    url = f"{url_parts[0]}+psycopg://{url_parts[1]}"
-    return url
+    return settings.DATABASE_URL
 
 
 def run_migrations_offline():
@@ -54,27 +60,53 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
-
     """
     configuration = config.get_section(config.config_ini_section)
     configuration["sqlalchemy.url"] = get_url()
-    connectable = engine_from_config(
+
+    connectable = async_engine_from_config(
         configuration,
+        prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
-    with connectable.connect() as connection:
+    async def do_run_migrations(connectable):
+        async with connectable.connect() as connection:
+            await connection.run_sync(do_run_migrations_sync)
+
+    asyncio.run(do_run_migrations(connectable))
+
+
+def do_run_migrations_sync(connection: Connection):
+    def run_for_schema(schema: str):
+        print(f"--- Migrating Schema: {schema} ---")
+
+        # Ensure the tenant schema exists, then set the Postgres search path
+        # so 'CREATE TABLE x' happens inside 'schema.x'
+        connection.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{schema}"'))
+        connection.execute(text(f'GRANT USAGE ON SCHEMA "{schema}" TO "czmatejt"'))
+        connection.commit()
+        connection.execute(text(f'SET search_path TO "{schema}"'))
+
         context.configure(
-            connection=connection, target_metadata=target_metadata, compare_type=True
+            connection=connection,
+            target_metadata=target_metadata,
+            version_table_schema="public",
+            # We don't use 'include_schemas=True' here because we are
+            # manually switching the search_path instead.
         )
 
         with context.begin_transaction():
             context.run_migrations()
+        connection.commit()
+
+    for tenant in db_settings.ACTIVE_TENANTS:
+        run_for_schema(tenant)
 
 
 if context.is_offline_mode():

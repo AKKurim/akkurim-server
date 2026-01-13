@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 from pydantic import UUID1
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth.dependecies import (
     is_admin_and_tenant_info,
@@ -11,9 +13,10 @@ from app.core.auth.dependecies import (
     verify_and_get_auth_data,
 )
 from app.core.auth.schemas import AuthData
-from app.core.shared.database import get_db
+from app.core.database import get_db, get_tenant_db
 from app.core.shared.schemas import SchoolYearCreatePublic, SchoolYearReadPublic
 from app.core.shared.service import SchoolYearService
+from app.models import SchoolYear
 
 router = APIRouter(
     prefix="",
@@ -33,7 +36,7 @@ router = APIRouter(
 )
 
 admin_dep = Annotated[AuthData, Depends(is_admin_and_tenant_info)]
-db_dep = Annotated[Connection, Depends(get_db)]
+db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 service_dep = Annotated[SchoolYearService, Depends(SchoolYearService)]
 trainer_dep = Annotated[AuthData, Depends(is_trainer_and_tenant_info)]
 auth_data_dep = Annotated[AuthData, Depends(verify_and_get_auth_data)]
@@ -75,14 +78,17 @@ async def read_school_year(
 
 @router.get(
     "/school_year/",
-    response_model=list[SchoolYearReadPublic],
+    response_model=list[SchoolYear],
 )
 async def read_all_school_years(
     auth_data: auth_data_dep,
     db: db_dep,
     service: service_dep,
-) -> list[SchoolYearReadPublic]:
-    return await service.get_all_school_years(
-        auth_data.tenant_id,
-        db,
-    )
+) -> list[SchoolYear]:
+    # return await service.get_all_school_years(
+    #     auth_data.tenant_id,
+    #     db,
+    # )
+    statement = select(SchoolYear).where(SchoolYear.deleted_at.is_(None))
+    results = await db.exec(statement)
+    return results.all()

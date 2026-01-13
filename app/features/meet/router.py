@@ -10,7 +10,7 @@ from app.core.auth.dependecies import (
     is_trainer_and_tenant_info,
 )
 from app.core.auth.schemas import AuthData
-from app.core.shared.database import get_db
+from app.core.database import get_db
 from app.features.meet.schemas import MeetEventReadPublic
 from app.features.meet.service import MeetEventService
 

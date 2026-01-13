@@ -2,7 +2,7 @@ from asyncio import get_event_loop
 
 from asyncpg import Connection
 
-from app.core.shared.database import db
+from app.core.database import db
 from app.resources.initial_data.list_of_categories import CATEGORIES
 from app.resources.initial_data.list_of_disciplines import DISCIPLINES
 from app.resources.initial_data.list_of_item_types import ITEM_TYPES
@@ -14,7 +14,7 @@ async def main():
         async with db.pool.acquire() as connection:
             db_: Connection = connection
             await db_.execute(
-                "INSERT INTO public.remote_config (id, urgent_message, show_from, show_to, minimum_app_version, deleted_at) "
+                "INSERT INTO kurim.remote_config (id, urgent_message, show_from, show_to, minimum_app_version, deleted_at) "
                 + " VALUES (0, '', '2024-01-01T00:00:00+00:00', '2024-12-31T23:59:59+00:00', '2.4.0', null)"
                 + " ON CONFLICT (id) DO NOTHING;"
             )

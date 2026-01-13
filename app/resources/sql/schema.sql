@@ -2,28 +2,25 @@
 -- Please log an issue at https://github.com/pgadmin-org/pgadmin4/issues/new/choose if you find any bugs, including reproduction steps.
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS public.club (
-        id text NOT NULL,
-        name text NOT NULL,
-        description text NOT NULL,
-        created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
-
-CREATE TABLE IF NOT EXISTS public.remote_config
-(
-    id int NOT NULL,
-    urgent_message text,
-    show_from timestamp with time zone NOT NULL,
-    show_to timestamp with time zone NOT NULL,
-    minimum_app_version text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-  deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL);
-
 CREATE Schema IF NOT EXISTS tenant_id;
+
+CREATE TABLE IF NOT EXISTS tenant_id.club (
+    id text NOT NULL,
+    name text NOT NULL,
+    description text NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS tenant_id.remote_config
+(
+        id int NOT NULL,
+        urgent_message text,
+        show_from timestamp with time zone NOT NULL,
+        show_to timestamp with time zone NOT NULL,
+        minimum_app_version text NOT NULL,
+        PRIMARY KEY (id)
+);
+
 
 CREATE TABLE IF NOT EXISTS tenant_id.athlete
 (
@@ -42,9 +39,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete
     club_id text COLLATE pg_catalog."default",
     profile_image_id uuid,
     status text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT athlete_pkey PRIMARY KEY (id),
     CONSTRAINT athlete_birth_number_key UNIQUE (birth_number),
     CONSTRAINT athlete_ean_key UNIQUE (ean),
@@ -57,9 +51,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_guardian
 (
     athlete_id uuid NOT NULL,
     guardian_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT athlete_guardian_pkey PRIMARY KEY (athlete_id, guardian_id)
 );
 
@@ -72,9 +63,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_meet_event
     pb_sb text COLLATE pg_catalog."default",
     points text COLLATE pg_catalog."default",
     bib text COLLATE pg_catalog."default",
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT athlete_meet_event_pkey PRIMARY KEY (athlete_id, meet_event_id)
 );
 
@@ -82,9 +70,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_sign_up_form
 (
     athlete_id uuid NOT NULL,
     sign_up_form_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT athlete_sign_up_form_pkey PRIMARY KEY (athlete_id, sign_up_form_id)
 );
 
@@ -96,9 +81,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.category
     short_description text COLLATE pg_catalog."default" NOT NULL,
     description_en text COLLATE pg_catalog."default" NOT NULL,
     short_description_en text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     age text,
     CONSTRAINT category_pkey PRIMARY KEY (id)
 );
@@ -112,9 +94,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.discipline
     short_description text COLLATE pg_catalog."default" NOT NULL,
     description_en text COLLATE pg_catalog."default" NOT NULL,
     short_description_en text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT discipline_pkey PRIMARY KEY (id)
 );
 
@@ -126,9 +105,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.discipline_type
     description text COLLATE pg_catalog."default",
     name_en text COLLATE pg_catalog."default",
     description_en text COLLATE pg_catalog."default",
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT discipline_type_pkey PRIMARY KEY (id)
 );
 
@@ -140,9 +116,6 @@ CREATE TABLE IF NOT EXISTS tenant_id."group"
     training_time_id uuid NOT NULL,
     school_year_id uuid NOT NULL,
     system smallint,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT group_pkey PRIMARY KEY (id)
 );
 
@@ -150,9 +123,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.group_athlete
 (
     group_id uuid NOT NULL,
     athlete_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT group_athlete_pkey PRIMARY KEY (group_id, athlete_id)
 );
 
@@ -160,9 +130,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.group_trainer
 (
     group_id uuid NOT NULL,
     trainer_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT group_trainer_pkey PRIMARY KEY (group_id, trainer_id)
 );
 
@@ -174,9 +141,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.guardian
     last_name text COLLATE pg_catalog."default" NOT NULL,
     email text COLLATE pg_catalog."default" NOT NULL,
     phone text COLLATE pg_catalog."default",
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT guardian_pkey PRIMARY KEY (id),
     CONSTRAINT guardian_email_key UNIQUE (email),
     CONSTRAINT guardian_phone_key UNIQUE (phone)
@@ -191,9 +155,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.item
     count smallint NOT NULL,
     item_type_id uuid NOT NULL,
     athlete_id uuid,
-    created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT item_pkey PRIMARY KEY (id)
 );
 
@@ -202,9 +163,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.item_type
     id uuid NOT NULL,
     name text COLLATE pg_catalog."default" NOT NULL,
     type text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT item_type_pkey PRIMARY KEY (id)
 );
 
@@ -221,9 +179,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.meet
     registration_limit smallint,
     location text COLLATE pg_catalog."default",
     organizer text COLLATE pg_catalog."default",
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT meet_pkey PRIMARY KEY (id)
 );
 
@@ -236,9 +191,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.meet_event
     start_at timestamp with time zone NOT NULL,
     phase text COLLATE pg_catalog."default",
     count smallint,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone,
-    deleted_at timestamp with time zone,
     CONSTRAINT meet_event_pkey PRIMARY KEY (id)
 );
 
@@ -246,9 +198,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.school_year
 (
     id uuid NOT NULL,
     name text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT school_year_pkey PRIMARY KEY (id)
 );
 
@@ -276,9 +225,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.sign_up_form
     school_year_id uuid NOT NULL,
     times_per_week smallint NOT NULL,
     days_in_week text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT sign_up_form_pkey PRIMARY KEY (id)
 );
 
@@ -290,9 +236,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.trainer
     status text NOT NULL,
     qualification text COLLATE pg_catalog."default" NOT NULL,
     salary_per_hour smallint NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT trainer_pkey PRIMARY KEY (id),
     CONSTRAINT trainer_athlete_id_key UNIQUE (athlete_id)
 );
@@ -304,9 +247,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.training
     group_id uuid NOT NULL,
     description text COLLATE pg_catalog."default",
     duration_minutes smallint NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT training_pkey PRIMARY KEY (id)
 );
 
@@ -315,9 +255,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.training_athlete
     training_id uuid NOT NULL,
     athlete_id uuid NOT NULL,
     presence text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT training_athlete_pkey PRIMARY KEY (training_id, athlete_id)
 );
 
@@ -329,9 +266,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.training_time
     winter_time time with time zone NOT NULL,
     duration_summer smallint NOT NULL,
     duration_winter smallint NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT training_time_pkey PRIMARY KEY (id)
 );
 
@@ -340,9 +274,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.training_trainer
     training_id uuid NOT NULL,
     trainer_id uuid NOT NULL,
     presence text COLLATE pg_catalog."default",
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT training_trainer_pkey PRIMARY KEY (training_id, trainer_id)
 );
 
@@ -353,9 +284,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.web_post
     cover_image_id uuid,
     content text COLLATE pg_catalog."default" NOT NULL,
     trainer_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     CONSTRAINT web_post_pkey PRIMARY KEY (id)
 );
 
@@ -374,9 +302,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.helper
     zip text,
     qualification text,
     preferrence text,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (id)
 );
 
@@ -384,9 +309,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.sign_up_form_group
 (
     sign_up_form_id uuid NOT NULL,
     group_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (sign_up_form_id, group_id)
 );
 
@@ -395,9 +317,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.athlete_registration_meet_event
     athlete_id uuid NOT NULL,
     meet_event_id uuid NOT NULL,
     status text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (athlete_id, meet_event_id)
 );
 
@@ -410,9 +329,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.payment
     from_id uuid,
     to_id uuid,
     description text,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (id)
 );
 
@@ -425,9 +341,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.request
     item_id uuid,
     name text NOT NULL,
     description text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (id)
 );
 
@@ -437,9 +350,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.points
     source_id uuid NOT NULL,
     amount bigint NOT NULL,
     athlete_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (type, source_id, athlete_id)
 );
 
@@ -450,9 +360,6 @@ CREATE TABLE IF NOT EXISTS tenant_id.file
     size bigint NOT NULL,
     mime_type text NOT NULL,
     type text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (id)
 );
 
@@ -464,19 +371,13 @@ CREATE TABLE IF NOT EXISTS tenant_id.response
     person_id uuid NOT NULL,
     file_id uuid,
     description text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS tenant_id.request_file
 (
     request_id uuid NOT NULL,
-    file_id uuid NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone
+    file_id uuid NOT NULL
 );
 
 /* 
@@ -781,3 +682,174 @@ ALTER TABLE IF EXISTS tenant_id.request_file
     NOT VALID;
 
 END;
+
+-- Ensure audit columns exist on all tables (safe to re-run)
+ALTER TABLE IF EXISTS tenant_id.club ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.club ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.club ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.club ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.remote_config ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.remote_config ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.remote_config ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.remote_config ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.athlete ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.athlete ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.athlete_guardian ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.athlete_meet_event ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.athlete_sign_up_form ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.category ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.category ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.category ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.category ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.discipline ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.discipline ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.discipline ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.discipline ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.discipline_type ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.discipline_type ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.discipline_type ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.discipline_type ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id."group" ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id."group" ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id."group" ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id."group" ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.group_athlete ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.group_athlete ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.group_athlete ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.group_athlete ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.group_trainer ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.group_trainer ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.group_trainer ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.group_trainer ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.guardian ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.guardian ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.guardian ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.guardian ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.item ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.item ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.item ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.item ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.item_type ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.item_type ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.item_type ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.item_type ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.meet ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.meet ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.meet ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.meet ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.meet_event ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.meet_event ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.meet_event ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.meet_event ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.school_year ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.school_year ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.school_year ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.school_year ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.sign_up_form ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.trainer ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.trainer ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.trainer ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.trainer ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.training ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.training ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.training_athlete ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_athlete ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_athlete ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.training_athlete ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.training_time ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_time ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_time ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.training_time ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.training_trainer ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_trainer ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.training_trainer ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.training_trainer ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.web_post ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.web_post ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.web_post ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.web_post ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.helper ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.helper ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.helper ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.helper ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.sign_up_form_group ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.athlete_registration_meet_event ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.payment ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.payment ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.payment ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.payment ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.request ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.request ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.request ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.request ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.points ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.points ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.points ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.points ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.file ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.file ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.file ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.file ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.response ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.response ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.response ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.response ADD COLUMN IF NOT EXISTS last_updated_by text;
+
+ALTER TABLE IF EXISTS tenant_id.request_file ADD COLUMN IF NOT EXISTS created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.request_file ADD COLUMN IF NOT EXISTS updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE IF EXISTS tenant_id.request_file ADD COLUMN IF NOT EXISTS deleted_at timestamp with time zone;
+ALTER TABLE IF EXISTS tenant_id.request_file ADD COLUMN IF NOT EXISTS last_updated_by text;

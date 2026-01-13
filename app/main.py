@@ -14,11 +14,11 @@ from app.core.auth.auth_supertokens_config import supertokens_init
 from app.core.auth.dependecies import verify_and_get_auth_data
 from app.core.auth.schemas import AuthData
 from app.core.config import settings
+from app.core.database import db
 from app.core.logging import logger
 from app.core.logging import router as log_router
 from app.core.observation_middleware import ObservationMiddleware
 from app.core.remote_config.router import router as remote_config_router
-from app.core.shared.database import db
 from app.core.shared.router import router as shared_router
 from app.core.sse.broadcast import broadcast
 from app.core.sse.router import router as sse_router

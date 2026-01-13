@@ -4,9 +4,9 @@ from asyncpg import Connection
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 
+from app.core.database import get_db
 from app.core.remote_config.schemas import RemoteConfigReadPublic
 from app.core.remote_config.service import RemoteConfigService
-from app.core.shared.database import get_db
 
 router = APIRouter(
     prefix="/remote-config",

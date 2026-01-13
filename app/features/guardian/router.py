@@ -11,7 +11,7 @@ from app.core.auth.dependecies import (
     verify_and_get_auth_data,
 )
 from app.core.auth.schemas import AuthData
-from app.core.shared.database import get_db
+from app.core.database import get_db
 from app.features.guardian.schemas import (
     GuardianCreatePublic,
     GuardianReadPublic,
