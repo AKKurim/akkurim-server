@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      secrets:
+        - gh_token 
     image: akkurim-server-main
     container_name: akkurim-server-main
     restart: always
@@ -91,3 +93,7 @@ volumes:
   postgres_data_main:
   postgres_auth_main:
   fastapi_logs:
+
+secrets:
+  gh_token:
+    environment: "GITHUB_TOKEN"

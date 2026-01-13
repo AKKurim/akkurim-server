@@ -22,6 +22,7 @@ dependencies = [
     "typing-inspect>=0.9.0",
     "python-multipart>=0.0.20",
     "sqlmodel>=0.0.31",
+    "atletika-scraper",
 ]
 
 [dependency-groups]
@@ -29,3 +30,6 @@ dev = [
     "pytest>=8.3.4",
     "ruff>=0.8.4",
 ]
+
+[tool.uv.sources]
+atletika-scraper = { git = "https://github.com/czmatejt/python-atletika-scraper.git" }
