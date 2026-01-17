@@ -14,7 +14,7 @@ from app.core.auth.auth_supertokens_config import supertokens_init
 from app.core.auth.dependecies import verify_and_get_auth_data
 from app.core.auth.schemas import AuthData
 from app.core.config import settings
-from app.core.database import db
+from app.core.database import sa_db
 from app.core.logging import logger
 from app.core.logging import router as log_router
 from app.core.observation_middleware import ObservationMiddleware
@@ -26,12 +26,12 @@ from app.core.sync.router import router as sync_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
-        await db.connect()
+        await sa_db.connect()
         await broadcast.connect()
         logger.info("APP STARTED")
         yield
     finally:
-        await db.disconnect()
+        await sa_db.disconnect()
         await broadcast.disconnect()
         logger.info("APP STOPPED")
 
