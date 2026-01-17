@@ -1,19 +1,17 @@
 from typing import Annotated, Any
 
-from asyncpg import Connection
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import ORJSONResponse
-from pydantic import UUID1, AwareDatetime
+from pydantic import AwareDatetime
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth.dependecies import (
     is_admin_and_tenant_info,
     is_trainer_and_tenant_info,
 )
 from app.core.auth.schemas import AuthData
-from app.core.database import get_db
-from app.core.logging import logger
+from app.core.database import get_tenant_db
 from app.core.sync.service import SyncService
-from app.core.sync.sync_config import TABLE_NAMES
 
 router = APIRouter(
     prefix="/sync",
@@ -31,7 +29,7 @@ router = APIRouter(
 
 trainer_dep = Annotated[AuthData, Depends(is_trainer_and_tenant_info)]
 admin_dep = Annotated[AuthData, Depends(is_admin_and_tenant_info)]
-db_dep = Annotated[Connection, Depends(get_db)]
+db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 service_dep = Annotated[SyncService, Depends(SyncService)]
 
 

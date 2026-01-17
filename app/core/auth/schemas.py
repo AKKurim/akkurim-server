@@ -1,6 +1,3 @@
-from app.core.shared.base_schema import BaseSchema
-
-
-class AuthData(BaseSchema):
+class AuthData:
     tenant_id: str
     roles: tuple[str, ...]

@@ -5,15 +5,14 @@ import orjson
 from asyncpg import Connection, ForeignKeyViolationError, UniqueViolationError
 from pydantic import UUID1
 
-from app.core.logging import logger
-from app.core.shared.base_schema import BaseSchema
-from app.core.shared.exceptions import (
+from app.core.exceptions import (
     AlreadyExistsError,
     AlreadyUpdatedError,
     ForeignKeyViolationErrorHTTP,
     NotFoundError,
     UniqueViolationErrorHTTP,
 )
+from app.core.logging import logger
 from app.core.sse.broadcast import broadcast as global_broadcast
 from app.core.sse.schemas import LocalActionEnum, SSEEvent
 from app.core.utils.sql_utils import (
@@ -23,6 +22,7 @@ from app.core.utils.sql_utils import (
     generate_sql_soft_delete_with_returning,
     generate_sql_update_with_returning,
 )
+from app.models import BaseModel as BaseSchema
 
 
 class DefaultService:

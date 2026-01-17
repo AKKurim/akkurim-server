@@ -2,16 +2,17 @@ from datetime import datetime, timezone
 
 from asyncpg import Connection
 from pydantic import AwareDatetime
+from sqlalchemy import text
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.logging import logger
-from app.core.shared.base_schema import BaseSchema
-from app.core.sync.sync_config import TABLE_NAMES
 from app.core.utils.sql_utils import (
     convert_uuid_to_str,
     generate_sql_insert,
     generate_sql_read,
     generate_sql_tables_updated_after,
 )
+from app.models import BaseModel, models_by_table_name
 
 
 class SyncService:
@@ -22,13 +23,13 @@ class SyncService:
         self,
         tenant_id: str,
         from_date: AwareDatetime,
-        db: Connection,
+        db: AsyncSession,
     ) -> list[str]:
         query = generate_sql_tables_updated_after(
             tenant_id=tenant_id,
-            table_names=TABLE_NAMES.keys(),
+            table_names=models_by_table_name.keys(),
         )
-        res = await db.fetch(query, from_date)
+        res = await db.exec(text(query), from_date)
         return [r["table_name"] for r in res]
 
     async def get_objects_to_sync(
@@ -37,9 +38,9 @@ class SyncService:
         table_name: str,
         from_date: AwareDatetime,
         db: Connection,
-    ) -> list[BaseSchema]:
+    ) -> list[BaseModel]:
         try:
-            schema: BaseSchema = TABLE_NAMES[table_name]
+            schema: BaseModel = models_by_table_name[table_name]
         except KeyError:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
 
@@ -66,12 +67,12 @@ class SyncService:
         self,
         tenant_id: str,
         table_name: str,
-        data: list[BaseSchema],
+        data: list[BaseModel],
         primary_keys: list[str],
         db: Connection,
     ) -> None:
         try:
-            schema: BaseSchema = TABLE_NAMES[table_name]
+            schema: BaseModel = models_by_table_name[table_name]
         except KeyError:
             raise ValueError(f"Table {table_name} not found in TABLE_NAMES")
         for d in data:

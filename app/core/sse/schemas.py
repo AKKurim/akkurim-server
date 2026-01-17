@@ -3,15 +3,13 @@ from typing import Optional
 
 from pydantic import UUID1
 
-from app.core.shared.base_schema import BaseSchema
-
 
 class LocalActionEnum(Enum):
     upsert = "upsert"
     delete = "delete"
 
 
-class SSEEvent(BaseSchema):
+class SSEEvent:
     tenant: str
     table_name: str
     endpoint: Optional[str] = None
