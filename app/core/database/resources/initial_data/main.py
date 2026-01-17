@@ -3,9 +3,7 @@ from asyncio import get_event_loop
 from asyncpg import Connection
 
 from app.core.database import db
-from app.resources.initial_data.list_of_categories import CATEGORIES
-from app.resources.initial_data.list_of_disciplines import DISCIPLINES
-from app.resources.initial_data.list_of_item_types import ITEM_TYPES
+from app.core.database.resources.initial_data import CATEGORIES, DISCIPLINES, ITEM_TYPES
 
 
 async def main():

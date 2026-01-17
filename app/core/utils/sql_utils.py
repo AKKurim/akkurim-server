@@ -38,11 +38,6 @@ def generate_sql_read(
     conditions: dict[str, dict] = {},
     condition_operator: str = "AND",
 ) -> tuple[str, tuple]:
-    if table == "club":
-        tenant_id = "public"
-    if table == "remote_config":
-        tenant_id = "public"
-
     columns = ", ".join(columns)
     conditions_str = f" {condition_operator} ".join(
         [
@@ -154,7 +149,7 @@ def generate_sql_tables_updated_after(
 ) -> str:
     return "UNION ALL ".join(
         [
-            f"(SELECT '{table_name}' as table_name FROM {tenant_id if table_name != 'club' and table_name != 'remote_config' else 'public'}.{table_name} WHERE updated_at > $1 OR deleted_at > $1 LIMIT 1)"
+            f"(SELECT '{table_name}' as table_name FROM {tenant_id}.{table_name} WHERE updated_at > $1 OR deleted_at > $1 LIMIT 1)"
             for table_name in table_names
         ]
     )
@@ -164,6 +159,5 @@ def convert_uuid_to_str(data: dict) -> dict:
     for key, value in data.items():
         print(key, value)
         if isinstance(value, uuid.UUID):
-            print("here")
             data[key] = str(value)
     return data

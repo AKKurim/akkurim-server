@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import Optional
+from uuid import UUID
 
-from pydantic import UUID1
+from sqlmodel import SQLModel
 
 
 class LocalActionEnum(Enum):
@@ -9,10 +10,10 @@ class LocalActionEnum(Enum):
     delete = "delete"
 
 
-class SSEEvent:
+class SSEEvent(SQLModel):
     tenant: str
     table_name: str
     endpoint: Optional[str] = None
     http_method: str = "GET"
     local_action: LocalActionEnum = LocalActionEnum.upsert
-    id: UUID1 | str | int
+    id: UUID | str | int

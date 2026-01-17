@@ -1,6 +1,7 @@
+import re
 from datetime import datetime, timezone
+from typing import Tuple
 
-from asyncpg import Connection
 from pydantic import AwareDatetime
 from sqlalchemy import text
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -19,6 +20,18 @@ class SyncService:
     def __init__(self):
         pass
 
+    def _convert_query_and_params(self, query: str, values: Tuple) -> Tuple[str, dict]:
+        # convert $1, $2... placeholders to :p1, :p2... and build mapping
+        if not values:
+            return query, {}
+
+        def repl(m):
+            return f":p{m.group(1)}"
+
+        new_query = re.sub(r"\$(\d+)", repl, query)
+        params = {f"p{i+1}": v for i, v in enumerate(values)}
+        return new_query, params
+
     async def get_tables_to_sync(
         self,
         tenant_id: str,
@@ -29,15 +42,17 @@ class SyncService:
             tenant_id=tenant_id,
             table_names=models_by_table_name.keys(),
         )
-        res = await db.exec(text(query), from_date)
-        return [r["table_name"] for r in res]
+        sql, params = self._convert_query_and_params(query, (from_date,))
+        result = await db.exec(text(sql), params=params)
+        rows = result.all()
+        return [r._mapping["table_name"] for r in rows]
 
     async def get_objects_to_sync(
         self,
         tenant_id: str,
         table_name: str,
         from_date: AwareDatetime,
-        db: Connection,
+        db: AsyncSession,
     ) -> list[BaseModel]:
         try:
             schema: BaseModel = models_by_table_name[table_name]
@@ -60,8 +75,10 @@ class SyncService:
             },
             condition_operator="OR",
         )
-        res = await db.fetch(query, *values)
-        return [convert_uuid_to_str(dict(r)) for r in res]
+        sql, params = self._convert_query_and_params(query, tuple(values))
+        result = await db.exec(text(sql), params=params)
+        rows = result.all()
+        return [convert_uuid_to_str(dict(r._mapping)) for r in rows]
 
     async def sync_objects(
         self,
@@ -69,7 +86,7 @@ class SyncService:
         table_name: str,
         data: list[BaseModel],
         primary_keys: list[str],
-        db: Connection,
+        db: AsyncSession,
     ) -> None:
         try:
             schema: BaseModel = models_by_table_name[table_name]
@@ -95,6 +112,8 @@ class SyncService:
             )
             query += ";"
             logger.info(query)
-            await db.execute(query, *values)
+            sql, params = self._convert_query_and_params(query, values)
+            await db.exec(text(sql), params=params)
+            await db.commit()
 
         return None

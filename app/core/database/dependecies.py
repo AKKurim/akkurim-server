@@ -51,12 +51,3 @@ async def get_tenant_db(
     async with async_session() as session:
         await session.execute(text(f'SET search_path TO "{auth_data.tenant_id}"'))
         yield session
-
-
-async def get_db():
-    async with db.pool.acquire() as connection:
-        try:
-            yield connection
-        finally:
-            connection: Connection
-            await connection.close()
