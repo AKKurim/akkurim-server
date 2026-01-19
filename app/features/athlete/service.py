@@ -1,14 +1,16 @@
 from typing import List
 
+from atletika_scraper import PrivateCASScraper
 from sqlalchemy.future import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.core.scraper import get_private_scraper
 from app.models import Athlete, AthleteGuardian, File, Guardian
 
 
 class AthleteService:
     def __init__(self):
-        pass
+        self.scraper: PrivateCASScraper = get_private_scraper()
 
     async def get_athlete_by_id(
         self,

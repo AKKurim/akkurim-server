@@ -61,6 +61,5 @@ async def create_athlete(
     db: db_dep,
     service: service_dep,
 ) -> Athlete:
-    print(athlete.model_dump())
     created_athlete = await service.create_athlete(athlete, db)
     return created_athlete

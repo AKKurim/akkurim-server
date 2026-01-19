@@ -16,6 +16,8 @@ services:
       - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - API_KEY=${API_KEY}
       - ENVIROMENT=${ENVIROMENT}
+      - IS_CAS_USERNAME=${IS_CAS_USERNAME}
+      - IS_CAS_PASSWORD=${IS_CAS_PASSWORD}
     volumes:
       - fastapi_logs:/app/logs
     #healthcheck:
