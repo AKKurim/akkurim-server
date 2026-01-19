@@ -1,11 +1,11 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, List
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import ORJSONResponse
 from pydantic import AwareDatetime
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.core.auth import AuthData, is_admin_and_tenant_info, is_trainer_and_tenant_info
+from app.core.auth import AuthData, admin_dep, trainer_dep
 from app.core.database import get_tenant_db
 
 from .service import SyncService
@@ -24,22 +24,20 @@ router = APIRouter(
     default_response_class=ORJSONResponse,
 )
 
-trainer_dep = Annotated[AuthData, Depends(is_trainer_and_tenant_info)]
-admin_dep = Annotated[AuthData, Depends(is_admin_and_tenant_info)]
 db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 service_dep = Annotated[SyncService, Depends(SyncService)]
 
 
 @router.get(
     "/tables/",
-    response_model=list[str],
+    response_model=List[str],
 )
 async def get_tables_to_sync(
     from_date: AwareDatetime,
     auth_data: trainer_dep,
     db: db_dep,
     service: service_dep,
-) -> list[str]:
+) -> List[str]:
     return await service.get_tables_to_sync(
         auth_data.tenant_id,
         from_date,
@@ -49,7 +47,7 @@ async def get_tables_to_sync(
 
 @router.get(
     "/{table_name}",
-    response_model=list[dict],
+    response_model=List[dict],
 )
 async def get_objects_to_sync(
     table_name: str,
@@ -57,7 +55,7 @@ async def get_objects_to_sync(
     auth_data: trainer_dep,
     db: db_dep,
     service: service_dep,
-) -> list[dict]:
+) -> List[dict]:
     return await service.get_objects_to_sync(
         auth_data.tenant_id,
         table_name,

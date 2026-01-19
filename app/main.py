@@ -10,15 +10,15 @@ from supertokens_python.framework.fastapi import (
     get_middleware as supertokens_middleware,
 )
 
-from app.core.auth import AuthData, supertokens_init, verify_and_get_auth_data
+from app.core.auth import AuthData, auth_data_dep, supertokens_init
 from app.core.config import settings
 from app.core.database import sa_db
 from app.core.logging import logger
 from app.core.logging import router as log_router
 from app.core.observation_middleware import ObservationMiddleware
+from app.core.sse import broadcast
+from app.core.sse import router as sse_router
 from app.core.sync import router as sync_router
-from app.features.sse import broadcast
-from app.features.sse import router as sse_router
 
 
 @asynccontextmanager
@@ -68,9 +68,6 @@ app.include_router(sse_router, prefix=settings.API_V1_PREFIX)
 def read_root():
     content = {"status": "working", "app_name": settings.APP_NAME}
     return ORJSONResponse(content, 200)
-
-
-auth_data_dep = Annotated[AuthData, Depends(verify_and_get_auth_data)]
 
 
 @app.get(

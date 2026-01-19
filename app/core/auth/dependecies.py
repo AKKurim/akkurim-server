@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends
 from supertokens_python.recipe.session import SessionContainer
 from supertokens_python.recipe.session.exceptions import (
@@ -90,3 +92,10 @@ async def is_athlete_and_tenant_info(
             "Wrong user config", [ClaimValidationError(UserRoleClaim.key, None)]
         )
     return auth_data
+
+
+trainer_dep = Annotated[AuthData, Depends(is_trainer_and_tenant_info)]
+admin_dep = Annotated[AuthData, Depends(is_admin_and_tenant_info)]
+guardian_dep = Annotated[AuthData, Depends(is_guardian_and_tenant_info)]
+athlete_dep = Annotated[AuthData, Depends(is_athlete_and_tenant_info)]
+auth_data_dep = Annotated[AuthData, Depends(verify_and_get_auth_data)]
