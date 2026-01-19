@@ -39,6 +39,14 @@ async def get_athlete_by_id(
     service: service_dep,
 ) -> Athlete:
     athlete = await service.get_athlete_by_id(athlete_id, db)
+    if athlete is None:
+        # return 404 if not found
+        from fastapi import HTTPException
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Athlete not found",
+        )
     return athlete
 
 
@@ -53,5 +61,6 @@ async def create_athlete(
     db: db_dep,
     service: service_dep,
 ) -> Athlete:
+    print(athlete.model_dump())
     created_athlete = await service.create_athlete(athlete, db)
     return created_athlete
