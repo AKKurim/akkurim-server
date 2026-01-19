@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.logging import logger
-from app.core.utils.sql_utils import (
+from app.core.utils import (
     convert_uuid_to_str,
     generate_sql_insert,
     generate_sql_read,

@@ -5,13 +5,10 @@ from fastapi.responses import ORJSONResponse
 from pydantic import AwareDatetime
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.core.auth.dependecies import (
-    is_admin_and_tenant_info,
-    is_trainer_and_tenant_info,
-)
-from app.core.auth.schemas import AuthData
+from app.core.auth import AuthData, is_admin_and_tenant_info, is_trainer_and_tenant_info
 from app.core.database import get_tenant_db
-from app.core.sync.service import SyncService
+
+from .service import SyncService
 
 router = APIRouter(
     prefix="/sync",

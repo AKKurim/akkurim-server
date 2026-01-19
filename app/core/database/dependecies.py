@@ -6,8 +6,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.core.auth.dependecies import verify_and_get_auth_data
-from app.core.auth.schemas import AuthData
+from app.core.auth import AuthData, verify_and_get_auth_data
 from app.core.config import settings
 
 

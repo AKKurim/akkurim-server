@@ -10,17 +10,15 @@ from supertokens_python.framework.fastapi import (
     get_middleware as supertokens_middleware,
 )
 
-from app.core.auth.auth_supertokens_config import supertokens_init
-from app.core.auth.dependecies import verify_and_get_auth_data
-from app.core.auth.schemas import AuthData
+from app.core.auth import AuthData, supertokens_init, verify_and_get_auth_data
 from app.core.config import settings
 from app.core.database import sa_db
 from app.core.logging import logger
 from app.core.logging import router as log_router
 from app.core.observation_middleware import ObservationMiddleware
-from app.core.sse.broadcast import broadcast
-from app.core.sse.router import router as sse_router
-from app.core.sync.router import router as sync_router
+from app.core.sync import router as sync_router
+from app.features.sse import broadcast
+from app.features.sse import router as sse_router
 
 
 @asynccontextmanager
