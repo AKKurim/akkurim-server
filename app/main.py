@@ -19,6 +19,7 @@ from app.core.observation_middleware import ObservationMiddleware
 from app.core.sse import broadcast
 from app.core.sse import router as sse_router
 from app.core.sync import router as sync_router
+from app.features.athlete import router as athlete_router
 
 
 @asynccontextmanager
@@ -58,6 +59,7 @@ app.add_middleware(
 app.include_router(log_router)
 app.include_router(sync_router, prefix=settings.API_V1_PREFIX)
 app.include_router(sse_router, prefix=settings.API_V1_PREFIX)
+app.include_router(athlete_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get(
