@@ -22,7 +22,7 @@ dependencies = [
     "typing-inspect>=0.9.0",
     "python-multipart>=0.0.20",
     "sqlmodel>=0.0.31",
-    "atletika-scraper",
+    "atletika-scraper>=0.1.1",
 ]
 
 [dependency-groups]

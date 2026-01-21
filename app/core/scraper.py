@@ -4,7 +4,10 @@ from .config import settings
 
 # this file is to prevent creating multiple scraper instances
 private_scraper = PrivateCASScraper(
-    username=settings.IS_CAS_USERNAME, password=settings.IS_CAS_PASSWORD
+    # TODO change the club_id to be configurable
+    username=settings.IS_CAS_USERNAME,
+    password=settings.IS_CAS_PASSWORD,
+    club_id=10245,
 )
 public_scraper = PublicCASScraper()
 
