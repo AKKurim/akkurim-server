@@ -7,12 +7,12 @@ ITEM_TYPES = [
     {
         "name": "Disky",
         "id": "f1c254f4-6e29-11f0-8de9-0242ac120003",
-        "typ": "rentable",
+        "type": "rentable",
     },
     {
         "name": "Oštěpy",
         "id": "f1c254f4-6e29-11f0-8de9-0242ac120004",
-        "typ": "rentable",
+        "type": "rentable",
     },
     {
         "name": "Klíče ",

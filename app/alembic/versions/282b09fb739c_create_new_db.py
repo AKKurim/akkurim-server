@@ -306,6 +306,21 @@ def upgrade() -> None:
     )
     op.create_index(op.f("ix_meet_event_id"), "meet_event", ["id"], unique=False)
     op.create_table(
+        "meet_trainer",
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("last_updated_by", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("meet_id", sa.Uuid(), nullable=False),
+        sa.Column("trainer_id", sa.Uuid(), nullable=False),
+        sa.Column("status", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("presence", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.PrimaryKeyConstraint("meet_id", "trainer_id"),
+    )
+    op.create_index(
+        op.f("ix_meet_trainer_meet_id"), "meet_trainer", ["meet_id"], unique=False
+    )
+    op.create_table(
         "payment",
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
@@ -553,6 +568,7 @@ def upgrade() -> None:
         "item",
         "item_type",
         "meet",
+        "meet_trainer",
         "meet_event",
         "payment",
         "points",

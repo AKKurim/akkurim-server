@@ -11,8 +11,16 @@ from app.core.database.resources.initial_data import CATEGORIES, DISCIPLINES, IT
 async def main():
     await sa_db.connect()
     try:
-        async with get_async_session() as connection:
-            db_: AsyncSession = connection
+        async_session = sa_db.get_sessionmaker()
+        async with async_session() as session:
+            db_: AsyncSession = session
+            await db_.execute(
+                text(
+                    "INSERT INTO kurim.club (id, name, description, deleted_at) "
+                    "VALUES ('kurim', 'Atletický klub Kuřim, z.s.', '', null) ON CONFLICT (id) DO NOTHING;"
+                )
+            )
+
             await db_.execute(
                 text(
                     "INSERT INTO kurim.remote_config (id, urgent_message, show_from, show_to, minimum_app_version, deleted_at) "
@@ -30,6 +38,12 @@ async def main():
                 text(
                     "INSERT INTO kurim.school_year (id, name, deleted_at) "
                     + " VALUES ('537d3235-7d18-11f0-8de9-0242ac120002', '2025/2026', null) ON CONFLICT (id) DO NOTHING;"
+                )
+            )
+            await db_.execute(
+                text(
+                    "INSERT INTO kurim.school_year (id, name, deleted_at) "
+                    + " VALUES ('537d3236-7d18-11f0-8de9-0242ac120002', '2026/2027', null) ON CONFLICT (id) DO NOTHING;"
                 )
             )
             # discipline types
@@ -77,42 +91,38 @@ async def main():
             )
             for category in CATEGORIES:
                 await db_.execute(
-                    "INSERT into kurim.category (id, description, short_description, description_en, short_description_en, sex, age, deleted_at) "
-                    + " VALUES ($1, $2, $3, $4, $5, $6, $7, null) ON CONFLICT (id) DO NOTHING; ",
-                    category["Id"],
-                    category["Description"],
-                    category["ShortDescription"],
-                    category["DescriptionEn"],
-                    category["ShortDescription"],
-                    category["Sex"],
-                    category["Age"],
+                    text(
+                        f"INSERT into kurim.category (id, description, short_description, description_en, short_description_en, sex, age, deleted_at) "
+                        + f" VALUES ({category['Id']}, '{category['Description']}', '{category['ShortDescription']}', '{category['DescriptionEn']}', '{category['ShortDescriptionEn']}', {category['Sex']}, '{category['Age']}', null) ON CONFLICT (id) DO NOTHING; ",
+                    )
                 )
             for discipline in DISCIPLINES:
                 await db_.execute(
-                    "INSERT into kurim.discipline (id, description, short_description, description_en, short_description_en, discipline_type_id, traditional, deleted_at) "
-                    + " VALUES ($1, $2, $3, $4, $5, $6, 1, null) ON CONFLICT (id) DO NOTHING; ",
-                    discipline["Id"],
-                    discipline["Description"],
-                    discipline["ShortDescription"],
-                    discipline["DescriptionEn"],
-                    discipline["ShortDescriptionEn"],
-                    discipline["DisciplineType"],
+                    text(
+                        f"INSERT into kurim.discipline (id, description, short_description, description_en, short_description_en, discipline_type_id, traditional, deleted_at) "
+                        + f" VALUES ({discipline['Id']}, '{discipline['Description']}', '{discipline['ShortDescription']}', '{discipline['DescriptionEn']}', '{discipline['ShortDescriptionEn']}', {discipline['DisciplineType']}, 1, null) ON CONFLICT (id) DO NOTHING; ",
+                    )
                 )
             for item_type in ITEM_TYPES:
                 await db_.execute(
-                    "INSERT into kurim.item_type (id, name, type, deleted_at) "
-                    + " VALUES ($1, $2, $3, null) ON CONFLICT (id) DO NOTHING; ",
-                    item_type["id"],
-                    item_type["name"],
-                    item_type["type"],
+                    text(
+                        f"INSERT into kurim.item_type (id, name, type, deleted_at) "
+                        + f" VALUES ('{item_type['id']}', '{item_type['name']}', '{item_type['type']}', null) ON CONFLICT (id) DO NOTHING; ",
+                    )
                 )
+
+            await db_.commit()
+            print("Initial data inserted successfully.")
+
     except Exception as e:
         print(e)
     finally:
+        print("Disconnecting from the database...")
         await sa_db.disconnect()
 
 
 if __name__ == "__main__":
+    print("Inserting initial data...")
     loop = get_event_loop()
     loop.run_until_complete(main())
     loop.close()

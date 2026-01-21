@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import ORJSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.core.auth import AuthData, trainer_dep
+from app.core.auth import admin_dep, trainer_dep
 from app.core.database import get_tenant_db
 from app.models import Athlete
 
@@ -29,6 +29,21 @@ service_dep = Annotated[AthleteService, Depends(AthleteService)]
 
 
 @router.get(
+    "/sync-from-cas/",
+)
+async def sync_athletes_from_cas(
+    auth_data: admin_dep,
+    db: db_dep,
+    service: service_dep,
+) -> List[Athlete]:
+    athletes = await service.sync_athletes_from_cas(
+        db,
+        auth_data,
+    )
+    return athletes
+
+
+@router.get(
     "/{athlete_id}",
     response_model=Athlete,
 )
@@ -39,15 +54,20 @@ async def get_athlete_by_id(
     service: service_dep,
 ) -> Athlete:
     athlete = await service.get_athlete_by_id(athlete_id, db)
-    if athlete is None:
-        # return 404 if not found
-        from fastapi import HTTPException
-
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Athlete not found",
-        )
     return athlete
+
+
+@router.get(
+    "/",
+    response_model=List[Athlete],
+)
+async def get_athletes(
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+) -> List[Athlete]:
+    athletes = await service.get_all_athletes(db)
+    return athletes
 
 
 @router.post(

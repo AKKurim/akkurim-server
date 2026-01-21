@@ -18,6 +18,7 @@ from .item import Item
 from .item_type import ItemType
 from .meet import Meet
 from .meet_event import MeetEvent
+from .meet_trainer import MeetTrainer
 from .payment import Payment
 from .points import Points
 from .remote_config import RemoteConfig
@@ -55,6 +56,7 @@ __all__ = [
     "ItemType",
     "Meet",
     "MeetEvent",
+    "MeetTrainer",
     "Payment",
     "Points",
     "RemoteConfig",
@@ -83,6 +85,7 @@ models_by_table_name = {
     "payment": Payment,
     "web_post": WebPost,
     "meet_event": MeetEvent,
+    "meet_trainer": MeetTrainer,
     "trainer": Trainer,
     "training_athlete": TrainingAthlete,
     "discipline_type": DisciplineType,
