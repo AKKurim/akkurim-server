@@ -6,14 +6,14 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from sqlalchemy import text
 from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.database import sa_db  # your context manager
+from app.core.logging import logger
 from app.core.notifications import notification_service
+from app.features.meet.service import MeetService
 from app.models import Meet
 
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 tenant = "kurim"
 
 
@@ -37,10 +37,35 @@ async def check_meet_starts():
         upcoming_meets = upcoming_meets_results.scalars().all()
         for meet in upcoming_meets:
             await notification_service.send_notification_to_all(
-                title="Blíží se začátek závodu!",
-                message=f"{meet.name} začíná za méně než 24 hodin.",
+                title="Blíží se začátek závodu",
+                message=f"{meet.name} začíná za 24 hodin.",
             )
-            print(f"Sent notification for meet {meet.id}", flush=True)
+            logger.info(f"Sent start notification for meet {meet.id}")
+
+
+async def live_update_results():
+    """Runs every 10 minutes during meets to update live results"""
+    async_session = sa_db.get_sessionmaker()
+    async with async_session() as session:
+        session: AsyncSession
+        await session.execute(text("SET search_path TO " + tenant))
+        now = datetime.utcnow()
+        ongoing_meets_results = await session.execute(
+            select(Meet).where(
+                Meet.start_at + timedelta(minutes=10)
+                <= now,  # buffer for delayed starts
+                Meet.end_at + timedelta(hours=3) >= now,  # buffer for extended meets
+            )
+        )
+        ongoing_meets = ongoing_meets_results.scalars().all()
+        if len(ongoing_meets) == 0:
+            logger.info("No ongoing meets for live update.")
+            return
+        meet_service = MeetService()
+        for meet in ongoing_meets:
+            meet: Meet
+            await meet_service.sync_meet_results_from_cas(session, meet.id)
+            logger.info(f"Updated live results for meet {meet.id}")
 
 
 async def check_birthdays():
@@ -52,7 +77,8 @@ async def check_birthdays():
 scheduler = AsyncIOScheduler()
 
 # Add jobs
-scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # for debug now
+scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # every 15 minutes
+scheduler.add_job(live_update_results, "cron", minute="*/10")  # every 10 minutes
 scheduler.add_job(check_birthdays, "cron", hour=9, minute=0)  # Run at 9:00 AM daily
 
 

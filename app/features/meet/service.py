@@ -2,11 +2,13 @@ import uuid
 from datetime import datetime, timezone
 from typing import List
 
+import orjson
 from atletika_scraper import PrivateCASScraper, PublicCASScraper
 from atletika_scraper.pdf import create_pdf_schedule, create_pdf_schedule_athlete_cards
 from atletika_scraper.schemas.athlete import AthleteRaceEntry
 from atletika_scraper.schemas.meet import FullMeet
 from atletika_scraper.schemas.meet_event import MeetEvent as ScraperMeetEvent
+from pydantic import UUID1
 from sqlalchemy import text
 from sqlalchemy.future import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -14,6 +16,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.auth import AuthData
 from app.core.exceptions import NotFoundError
 from app.core.scraper import get_private_scraper, get_public_scraper
+from app.core.sse.broadcast import broadcast
+from app.core.sse.schemas import LocalActionEnum, SSEEvent
 from app.models import Athlete, AthleteMeetEvent, Discipline, Meet, MeetEvent, Trainer
 
 
@@ -22,6 +26,22 @@ class MeetService:
         self.private_scraper: PrivateCASScraper = get_private_scraper()
         self.public_scraper: PublicCASScraper = get_public_scraper()
         self.club_filter = "Kuřim"
+        self.broadcast = broadcast
+        self.broadcast_endpoint = "/meet"
+        self.table = "meet"
+
+    async def notify_update(self, tenant: str, id: UUID1) -> None:
+        event = SSEEvent(
+            tenant=tenant,
+            table_name=self.table,
+            endpoint=self.broadcast_endpoint,
+            id=str(id),
+            local_action=LocalActionEnum.upsert,
+        )
+        await self.broadcast.publish(
+            channel="update",
+            message=orjson.dumps(event.model_dump()).decode("utf-8"),
+        )
 
     async def get_meet_by_id(
         self,
@@ -192,6 +212,7 @@ class MeetService:
                     )
                     db.add(athlete_meet_event)
         await db.commit()
+        await self.notify_update("kurim", meet.id)
         return meet
 
     async def sync_meet_results_from_cas(
@@ -336,4 +357,5 @@ class MeetService:
                     athlete_meet_event.last_updated_by = "server"
                 db.add(athlete_meet_event)
         await db.commit()
+        await self.notify_update("kurim", meet.id)
         return meet
