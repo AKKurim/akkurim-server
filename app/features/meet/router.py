@@ -7,7 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth import AuthData, admin_dep, trainer_dep
 from app.core.database import get_tenant_db
-from app.models import Meet
+from app.models import Meet, MeetEvent
 
 from .service import MeetService
 
@@ -31,7 +31,7 @@ service_dep = Annotated[MeetService, Depends(MeetService)]
 
 @router.get(
     "/{meet_id}",
-    response_model=Any,
+    response_model=Meet,
 )
 async def get_meet_by_id(
     meet_id: str,
@@ -45,9 +45,43 @@ async def get_meet_by_id(
     )
 
 
+@router.get(
+    "/by_external/{external_meet_id}",
+    response_model=Meet,
+)
+async def get_meet_by_external_id_type(
+    external_meet_id: str,
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+    type: str = "CAS",
+) -> Meet:
+    return await service.get_meet_by_external_id_type(
+        external_meet_id,
+        type,
+        db,
+    )
+
+
+@router.get(
+    "/{meet_id}/events",
+    response_model=List[MeetEvent],
+)
+async def get_meet_events_by_meet_id(
+    meet_id: str,
+    auth_data: trainer_dep,
+    db: db_dep,
+    service: service_dep,
+) -> List[MeetEvent]:
+    return await service.get_meet_events_by_meet_id(
+        meet_id,
+        db,
+    )
+
+
 @router.post(
     "/sync/cas/{external_meet_id}",
-    response_model=Any,
+    response_model=Meet,
     status_code=status.HTTP_201_CREATED,
 )
 async def sync_meet_from_cas(

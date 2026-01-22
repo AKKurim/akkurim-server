@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from atletika_scraper import PrivateCASScraper, PublicCASScraper
+from atletika_scraper.pdf import create_pdf_schedule, create_pdf_schedule_athlete_cards
 from atletika_scraper.schemas.athlete import AthleteRaceEntry
 from atletika_scraper.schemas.meet import FullMeet
 from atletika_scraper.schemas.meet_event import MeetEvent as ScraperMeetEvent
@@ -43,6 +44,26 @@ class MeetService:
         )
         meet = result.scalars().one_or_none()
         return meet
+
+    async def get_meet_by_external_id_type(
+        self,
+        external_id: str,
+        type: str,
+        db: AsyncSession,
+    ) -> Meet:
+        meet = await self._get_meet_by_external_id_type(db, external_id, type)
+        if meet is None:
+            raise NotFoundError("Meet not found")
+        return meet
+
+    async def get_meet_events_by_meet_id(
+        self,
+        meet_id: str,
+        db: AsyncSession,
+    ) -> List[MeetEvent]:
+        result = await db.execute(select(MeetEvent).where(MeetEvent.meet_id == meet_id))
+        meet_events = result.scalars().all()
+        return meet_events
 
     async def sync_meet_from_cas(
         self,
