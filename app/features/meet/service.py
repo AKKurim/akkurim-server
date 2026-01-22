@@ -7,19 +7,21 @@ from atletika_scraper.pdf import create_pdf_schedule, create_pdf_schedule_athlet
 from atletika_scraper.schemas.athlete import AthleteRaceEntry
 from atletika_scraper.schemas.meet import FullMeet
 from atletika_scraper.schemas.meet_event import MeetEvent as ScraperMeetEvent
+from sqlalchemy import text
 from sqlalchemy.future import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth import AuthData
 from app.core.exceptions import NotFoundError
 from app.core.scraper import get_private_scraper, get_public_scraper
-from app.models import Athlete, AthleteMeetEvent, Meet, MeetEvent, Trainer
+from app.models import Athlete, AthleteMeetEvent, Discipline, Meet, MeetEvent, Trainer
 
 
 class MeetService:
     def __init__(self):
         self.private_scraper: PrivateCASScraper = get_private_scraper()
         self.public_scraper: PublicCASScraper = get_public_scraper()
+        self.club_filter = "Kuřim"
 
     async def get_meet_by_id(
         self,
@@ -80,6 +82,7 @@ class MeetService:
 
         meet_data: FullMeet = self.public_scraper.get_full_meet_info(
             external_meet_id,
+            club_filter=self.club_filter,
             reg_athletes=reg_athletes,
         )
         reg_start, reg_end = (
@@ -188,5 +191,149 @@ class MeetService:
                         last_updated_by="server",
                     )
                     db.add(athlete_meet_event)
+        await db.commit()
+        return meet
+
+    async def sync_meet_results_from_cas(
+        self,
+        db: AsyncSession,
+        external_meet_id: str,
+        type: str = "CAS",
+    ) -> None:
+        meet_results_data = self.public_scraper.get_athlete_results(
+            external_meet_id,
+            club_filter=self.club_filter,
+        )
+        meet_res = await db.execute(
+            select(Meet).where(
+                (Meet.external_id == external_meet_id) & Meet.type.startswith(type)
+            )
+        )
+        meet: Meet = meet_res.scalars().one_or_none()
+        if meet is None:
+            raise NotFoundError(external_meet_id, "Meet not found")
+
+        for athlete_result in meet_results_data:
+            # try to find existing meet_event
+            athlete_result: AthleteRaceEntry
+            meet_event_result = await db.execute(
+                select(MeetEvent).where(
+                    (MeetEvent.meet_id == meet.id)
+                    & (MeetEvent.discipline_id == athlete_result.discipline_id)
+                    & (MeetEvent.category_id == athlete_result.category_id)
+                    & (MeetEvent.phase == athlete_result.phase)
+                )
+            )
+            meet_event: MeetEvent = meet_event_result.scalars().one_or_none()
+            if meet_event is None:
+                # try to find an event without finale phase
+                finale_text = "Finále"
+                meet_event_result = await db.execute(
+                    select(MeetEvent).where(
+                        (MeetEvent.meet_id == meet.id)
+                        & (MeetEvent.discipline_id == athlete_result.discipline_id)
+                        & (MeetEvent.category_id == athlete_result.category_id)
+                        & (MeetEvent.phase != finale_text)
+                    )
+                )
+                meet_event = meet_event_result.scalars().one_or_none()
+            if meet_event is None:
+                meet = await self.get_meet_by_external_id_type(
+                    external_meet_id,
+                    type,
+                    db,
+                )
+                # create new meet event
+                meet_event = MeetEvent(
+                    id=str(uuid.uuid1()),
+                    meet_id=meet.id,
+                    discipline_id=athlete_result.discipline_id,
+                    category_id=athlete_result.category_id,
+                    start_at=(
+                        athlete_result.start.isoformat() + "+01:00"
+                        if athlete_result.start
+                        else None
+                    ),  # unknown
+                    phase=athlete_result.phase,
+                    count=None,  # TODO fill later
+                    created_at=datetime.now(timezone.utc),
+                    updated_at=datetime.now(timezone.utc),
+                    last_updated_by="server",
+                )
+                db.add(meet_event)
+                await db.flush()
+
+            athletes: List[Athlete] = []
+            # find athlete
+            if athlete_result.is_relay_name:
+                last_names = map(str.strip, athlete_result.last_name.split(","))
+                athletes_result = await db.execute(
+                    select(Athlete).where(Athlete.last_name.in_(last_names))
+                )
+                # if there is two results with same last name, look into all
+                # athletes in meet_results_data to check if the athlete took
+                # any other discipline (non-relay) to identify them correctly
+                unparsed_athletes: List[Athlete] = athletes_result.scalars().all()
+                for unparsed_athlete in unparsed_athletes:
+                    found = next(
+                        (
+                            other_result
+                            for other_result in meet_results_data
+                            if (unparsed_athlete.first_name == other_result.first_name)
+                            and (unparsed_athlete.last_name == other_result.last_name)
+                            and not other_result.is_relay_name
+                        ),
+                        None,
+                    )
+                    if found is not None:
+                        athletes.append(unparsed_athlete)
+            else:
+                athlete_result_db = await db.execute(
+                    select(Athlete).where(
+                        (Athlete.last_name == athlete_result.last_name)
+                        & (Athlete.first_name == athlete_result.first_name)
+                    )
+                )
+                athlete_db: Athlete = athlete_result_db.scalars().one_or_none()
+                if athlete_db:
+                    athletes.append(athlete_db)
+            for athlete in athletes:
+                parsed_points = (
+                    str(int(athlete_result.points))
+                    if athlete_result.points
+                    and athlete_result.points == int(athlete_result.points)
+                    else str(athlete_result.points) if athlete_result.points else None
+                )
+                # find athlete meet event
+                athlete_meet_event_result = await db.execute(
+                    select(AthleteMeetEvent).where(
+                        (AthleteMeetEvent.athlete_id == athlete.id)
+                        & (AthleteMeetEvent.meet_event_id == meet_event.id)
+                    )
+                )
+                athlete_meet_event: AthleteMeetEvent = (
+                    athlete_meet_event_result.scalars().one_or_none()
+                )
+                if athlete_meet_event is None:
+                    athlete_meet_event = AthleteMeetEvent(
+                        athlete_id=athlete.id,
+                        meet_event_id=meet_event.id,
+                        result=athlete_result.result,
+                        wind=athlete_result.wind,
+                        pb_sb=athlete_result.pb_sb,
+                        points=parsed_points,
+                        bib=athlete_result.bib,
+                        created_at=datetime.now(timezone.utc),
+                        updated_at=datetime.now(timezone.utc),
+                        last_updated_by="server",
+                    )
+                else:
+                    athlete_meet_event.result = athlete_result.result
+                    athlete_meet_event.wind = athlete_result.wind
+                    athlete_meet_event.pb_sb = athlete_result.pb_sb
+                    athlete_meet_event.points = parsed_points
+                    athlete_meet_event.updated_at = datetime.now(timezone.utc)
+                    athlete_meet_event.last_updated_by = "server"
+                db.add(athlete_meet_event)
         await db.commit()
         return meet

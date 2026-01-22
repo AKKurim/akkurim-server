@@ -98,3 +98,22 @@ async def sync_meet_from_cas(
         type,
         use_private_registrations,
     )
+
+
+@router.post(
+    "/sync/results/cas/{external_meet_id}",
+    response_model=Meet,
+    status_code=status.HTTP_201_CREATED,
+)
+async def sync_meet_results_from_cas(
+    external_meet_id: str,
+    auth_data: admin_dep,
+    db: db_dep,
+    service: service_dep,
+    type: str = "CAS",
+) -> Meet:
+    return await service.sync_meet_results_from_cas(
+        db,
+        external_meet_id,
+        type,
+    )

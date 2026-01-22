@@ -25,7 +25,7 @@ class AthleteService:
     ) -> Athlete:
         result = await db.get(Athlete, athlete_id)
         if result is None:
-            raise NotFoundError("Athlete not found")
+            raise NotFoundError(athlete_id, "Athlete not found")
         return result
 
     async def _get_athlete_by_ean(

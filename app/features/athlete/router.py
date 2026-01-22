@@ -28,7 +28,7 @@ db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 service_dep = Annotated[AthleteService, Depends(AthleteService)]
 
 
-@router.get(
+@router.post(
     "/sync-from-cas/",
 )
 async def sync_athletes_from_cas(
