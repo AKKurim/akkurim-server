@@ -53,7 +53,7 @@ async def live_update_results():
         now = datetime.utcnow()
         ongoing_meets_results = await session.execute(
             select(Meet).where(
-                Meet.start_at + timedelta(minutes=15) <= now,
+                Meet.start_at + timedelta(minutes=9) <= now,
                 # buffer for first results since the event must happen
                 Meet.end_at + timedelta(hours=3) >= now,
                 # buffer for extended meets
@@ -80,7 +80,7 @@ scheduler = AsyncIOScheduler()
 
 # Add jobs
 scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # every 15 minutes
-scheduler.add_job(live_update_results, "cron", minute="26")  # every 5 minutes
+scheduler.add_job(live_update_results, "cron", minute="*/10")  # every 10 minutes
 scheduler.add_job(check_birthdays, "cron", hour=9, minute=0)  # Run at 9:00 AM daily
 
 
