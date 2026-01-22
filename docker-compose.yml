@@ -18,6 +18,9 @@ services:
       - ENVIROMENT=${ENVIROMENT}
       - IS_CAS_USERNAME=${IS_CAS_USERNAME}
       - IS_CAS_PASSWORD=${IS_CAS_PASSWORD}
+      - IS_CAS_CLUB_ID=${IS_CAS_CLUB_ID}
+      - ONESIGNAL_API_KEY=${ONESIGNAL_API_KEY}
+      - ONESIGNAL_APP_ID=${ONESIGNAL_APP_ID}
     volumes:
       - fastapi_logs:/app/logs
     #healthcheck:
@@ -28,6 +31,24 @@ services:
     depends_on:
       - db
       - supertokens
+  cron:
+    image: akkurim-server-main  # Use the same image name!
+    restart: always
+    depends_on:
+      - db
+    # Override the command to run the cron script instead of FastAPI
+    command: ["uv", "run", "python", "-m", "app.cron"]
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - API_KEY=${API_KEY}
+      - ENVIROMENT=${ENVIROMENT}
+      - IS_CAS_USERNAME=${IS_CAS_USERNAME}
+      - IS_CAS_PASSWORD=${IS_CAS_PASSWORD}
+      - IS_CAS_CLUB_ID=${IS_CAS_CLUB_ID}
+      - ONESIGNAL_API_KEY=${ONESIGNAL_API_KEY}
+      - ONESIGNAL_APP_ID=${ONESIGNAL_APP_ID}
+    networks:
+      - akkurim_network_main
 
   db:
     image: 'postgres:17'
