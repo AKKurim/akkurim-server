@@ -7,7 +7,7 @@ private_scraper = PrivateCASScraper(
     # TODO change the club_id to be configurable
     username=settings.IS_CAS_USERNAME,
     password=settings.IS_CAS_PASSWORD,
-    club_id=10245,
+    club_id=settings.IS_CAS_CLUB_ID,
 )
 public_scraper = PublicCASScraper()
 

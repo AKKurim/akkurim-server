@@ -9,6 +9,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.auth import AuthData, verify_and_get_auth_data
 from app.core.config import settings
 
+from .config import db_settings
+
 
 class SQLDatabase:
     """Manage SQLAlchemy async engine and sessionmaker similarly to `Database`.
@@ -25,7 +27,7 @@ class SQLDatabase:
     async def connect(self):
         if self.engine is None:
             self.engine = create_async_engine(
-                settings.DATABASE_URL,
+                db_settings.DATABASE_URL,
                 echo=settings.DEBUG,
                 future=True,
             )
@@ -47,7 +49,7 @@ class SQLDatabase:
             # temporary engine. Prefer calling `connect()` at startup.
             if self.engine is None:
                 self.engine = create_async_engine(
-                    settings.DATABASE_URL, echo=settings.DEBUG, future=True
+                    db_settings.DATABASE_URL, echo=settings.DEBUG, future=True
                 )
             self._sessionmaker = sessionmaker(
                 self.engine, class_=AsyncSession, expire_on_commit=False

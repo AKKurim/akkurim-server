@@ -1,7 +1,7 @@
 from broadcaster import Broadcast
 
-from app.core.config import settings
+from app.core.database import db_settings
 
 broadcast = Broadcast(
-    settings.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://")
+    db_settings.DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://")
 )

@@ -20,10 +20,10 @@ class Settings(BaseSettings):
     DASHBOARD_ADMIN: str = "tajovsky.matej@gmail.com"
 
     SUPERTOKENS_CONNECTION_URI: str = "http://supertokens:3567"
-    DATABASE_URL: str = str(os.getenv("DATABASE_URL", "none"))
 
     IS_CAS_USERNAME: str = os.getenv("IS_CAS_USERNAME", "none")
     IS_CAS_PASSWORD: str = os.getenv("IS_CAS_PASSWORD", "none")
+    IS_CAS_CLUB_ID: int = int(os.getenv("IS_CAS_CLUB_ID", "none"))
 
     # not related to settings but to pydantic
     model_config = {"case_sensitive": True}
