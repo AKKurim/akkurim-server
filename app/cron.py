@@ -11,6 +11,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.database import sa_db  # your context manager
 from app.core.logging import logger
 from app.core.notifications import notification_service
+from app.core.sse import broadcast
 from app.features.meet.service import MeetService
 from app.models import Meet
 
@@ -52,9 +53,10 @@ async def live_update_results():
         now = datetime.utcnow()
         ongoing_meets_results = await session.execute(
             select(Meet).where(
-                Meet.start_at + timedelta(minutes=10)
-                <= now,  # buffer for delayed starts
-                Meet.end_at + timedelta(hours=3) >= now,  # buffer for extended meets
+                Meet.start_at + timedelta(minutes=15) <= now,
+                # buffer for first results since the event must happen
+                Meet.end_at + timedelta(hours=3) >= now,
+                # buffer for extended meets
             )
         )
         ongoing_meets = ongoing_meets_results.scalars().all()
@@ -64,7 +66,7 @@ async def live_update_results():
         meet_service = MeetService()
         for meet in ongoing_meets:
             meet: Meet
-            await meet_service.sync_meet_results_from_cas(session, meet.id)
+            await meet_service.sync_meet_results_from_cas(session, meet.external_id)
             logger.info(f"Updated live results for meet {meet.id}")
 
 
@@ -78,12 +80,14 @@ scheduler = AsyncIOScheduler()
 
 # Add jobs
 scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # every 15 minutes
-scheduler.add_job(live_update_results, "cron", minute="*/10")  # every 10 minutes
+scheduler.add_job(live_update_results, "cron", minute="26")  # every 5 minutes
 scheduler.add_job(check_birthdays, "cron", hour=9, minute=0)  # Run at 9:00 AM daily
 
 
 async def main():
     logger.info("Starting Cron Worker...")
+    await sa_db.connect()
+    await broadcast.connect()
     scheduler.start()
 
     # Keep the script running
@@ -92,6 +96,10 @@ async def main():
             await asyncio.sleep(1)
     except (KeyboardInterrupt, SystemExit):
         pass
+    finally:
+        scheduler.shutdown(wait=False)
+        await broadcast.disconnect()
+        await sa_db.disconnect()
 
 
 if __name__ == "__main__":
