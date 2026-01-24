@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
+from supertokens_python.asyncio import get_user
 from supertokens_python.recipe.session import SessionContainer
 from supertokens_python.recipe.session.exceptions import (
     ClaimValidationError,
@@ -15,10 +16,10 @@ from app.core.logging import logger
 
 
 async def verify_and_get_auth_data(
-    session=(Depends(verify_session()) if not settings.DEBUG else None),
+    session=(Depends(verify_session())),  # if not settings.DEBUG else None),
 ) -> AuthData:
-    if settings.DEBUG:
-        return fake_auth_data()
+    # if settings.DEBUG:
+    #     return fake_auth_data()
     user_roles = await session.get_claim_value(UserRoleClaim)
     tenant = ""
     roles = []
@@ -35,7 +36,15 @@ async def verify_and_get_auth_data(
         raise_invalid_claims_exception(
             "Tenant not found", [ClaimValidationError(UserRoleClaim.key, None)]
         )
-    return AuthData(tenant_id=tenant, roles=tuple(roles))
+
+    user_id = session.get_user_id()
+    user_info = await get_user(user_id)
+    if user_info is None:
+        raise_invalid_claims_exception(
+            "User not found", [ClaimValidationError(UserRoleClaim.key, None)]
+        )
+    email = user_info.emails[0]
+    return AuthData(tenant_id=tenant, roles=tuple(roles), email=email)
 
 
 # TODO maybe change this to copy a real structure but it works for now

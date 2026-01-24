@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/v1"
     API_V2_PREFIX: str = "/v2"
 
-    PUBLIC_DOMAIN: str = f"https://{'dev' if DEBUG else ''}api.akkurim.cz"
+    PUBLIC_DOMAIN: str = f"https://api.akkurim.cz"
     API_DOMAIN: str = "http://localhost:8000"
     WEBSITE_DOMAIN: str = "https://akkurim.cz"
 
