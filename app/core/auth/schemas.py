@@ -7,3 +7,6 @@ class AuthData(SQLModel):
     roles: tuple[str, ...]
     session: SessionContainer
     email: str | None = None
+
+    class Config:
+        arbitrary_types_allowed = True

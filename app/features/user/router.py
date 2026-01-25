@@ -1,6 +1,5 @@
 from typing import Annotated
 
-from core.auth import auth_data_dep
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.responses import ORJSONResponse
 from sqlmodel import select
