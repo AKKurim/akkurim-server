@@ -15,6 +15,8 @@ from app.core.config import settings
 from app.core.logging import logger
 
 
+# TODO right now it uses session even in debug mode
+# coz we testing the website locally and need auth there
 async def verify_and_get_auth_data(
     session=(Depends(verify_session())),  # if not settings.DEBUG else None),
 ) -> AuthData:

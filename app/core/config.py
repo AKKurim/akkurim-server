@@ -14,7 +14,9 @@ class Settings(BaseSettings):
 
     PUBLIC_DOMAIN: str = f"https://api.akkurim.cz"
     API_DOMAIN: str = "http://localhost:8000"
-    WEBSITE_DOMAIN: str = "https://akkurim.cz"
+    WEBSITE_DOMAIN: str = "http://localhost:3000"
+    # the website runs on the same domain host as the api in production
+    # "https://akkurim.cz"
 
     API_KEY: str = os.getenv("API_KEY", "none")
     DASHBOARD_ADMIN: str = "tajovsky.matej@gmail.com"
