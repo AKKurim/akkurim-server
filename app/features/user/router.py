@@ -8,6 +8,12 @@ from supertokens_python.recipe.emailpassword.asyncio import (
     sign_in,
     update_email_or_password,
 )
+
+# import SignInOkResult from somewhere
+from supertokens_python.recipe.emailpassword.interfaces import (
+    SignInOkResult,
+    UpdateEmailOrPasswordOkResult,
+)
 from supertokens_python.recipe.session import SessionContainer
 from supertokens_python.recipe.session.asyncio import revoke_all_sessions_for_user
 from supertokens_python.recipe.session.framework.fastapi import verify_session
@@ -43,20 +49,20 @@ async def change_password(
     # 2. Verify Old Password by attempting a "Sign In"
     # This is the safest way to check if 'oldPassword' is correct
     signin_response = await sign_in(
-        auth_data.email, data.old_password, user_context=None
+        "public", auth_data.email, data.old_password, user_context=None
     )
 
-    if signin_response.status != "OK":
+    if not isinstance(signin_response, SignInOkResult):
         # Usually means WRONG_CREDENTIALS_ERROR
         raise HTTPException(status_code=400, detail="Current password is incorrect.")
 
     # 3. Update to New Password
-    user_id = auth_data.session.get_user_id()
+    recipe_user_id = auth_data.session.get_recipe_user_id()
     update_response = await update_email_or_password(
-        user_id, password=data.new_password
+        recipe_user_id, password=data.new_password
     )
 
-    if update_response.status != "OK":
+    if not isinstance(update_response, UpdateEmailOrPasswordOkResult):
         raise HTTPException(status_code=500, detail="Failed to update password")
 
     return {"message": "Password updated successfully"}
