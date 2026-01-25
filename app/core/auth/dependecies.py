@@ -46,7 +46,7 @@ async def verify_and_get_auth_data(
             "User not found", [ClaimValidationError(UserRoleClaim.key, None)]
         )
     email = user_info.emails[0]
-    return AuthData(tenant_id=tenant, roles=tuple(roles), email=email)
+    return AuthData(tenant_id=tenant, roles=tuple(roles), session=session, email=email)
 
 
 # TODO maybe change this to copy a real structure but it works for now
