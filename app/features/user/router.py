@@ -97,6 +97,8 @@ async def read_me(
             res_dict["first_name"] = athlete.first_name
             res_dict["last_name"] = athlete.last_name
             res_dict["full_name"] = f"{athlete.first_name} {athlete.last_name}"
+            return ORJSONResponse(res_dict, 200)
+
     if "guardian" in auth_data.roles:
         guardian_res = await db.execute(
             select(Guardian).where(Guardian.email == auth_data.email)
