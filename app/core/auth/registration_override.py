@@ -46,7 +46,7 @@ def override_email_password_apis(original_implementation: APIInterface):
             )
             helper = helper_result.scalars().one_or_none()
             if athlete is None and guardian is None and helper is None:
-                return SignUpPostNotAllowedResponse("Email not recognized")
+                return SignUpPostNotAllowedResponse("Email nenalezen v databázi.")
 
         # 1. Call original (Pass ALL arguments, including tenant_id)
         response = await original_sign_up_post(
