@@ -12,9 +12,15 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/v1"
     API_V2_PREFIX: str = "/v2"
 
-    PUBLIC_DOMAIN: str = f"https://api.akkurim.cz"
-    API_DOMAIN: str = "http://localhost:8000"
-    WEBSITE_DOMAIN: str = "https://akkurim.cz"
+    PUBLIC_DOMAIN: str = (
+        f"https://api.akkurim.cz" if not DEBUG else "http://192.168.0.9:8000"
+    )
+    API_DOMAIN: str = (
+        "https://api.akkurim.cz" if not DEBUG else "http://192.168.0.9:8000"
+    )
+    WEBSITE_DOMAIN: str = (
+        "https://akkurim.cz" if not DEBUG else "http://192.168.0.9:3000"
+    )
 
     API_KEY: str = os.getenv("API_KEY", "none")
     DASHBOARD_ADMIN: str = "tajovsky.matej@gmail.com"
