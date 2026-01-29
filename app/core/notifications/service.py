@@ -41,3 +41,7 @@ class NotificationService:
 
 
 notification_service = NotificationService()
+
+
+def get_notification_service() -> NotificationService:
+    return notification_service

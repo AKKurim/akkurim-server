@@ -1,13 +1,15 @@
 import uuid
 from datetime import datetime, timezone
-from typing import List
+from typing import Annotated, List
 
 import orjson
 from atletika_scraper import PrivateCASScraper, PublicCASScraper
 from atletika_scraper.pdf import create_pdf_schedule, create_pdf_schedule_athlete_cards
 from atletika_scraper.schemas.athlete import AthleteRaceEntry
+from atletika_scraper.schemas.discipline import get_discipline_by_id
 from atletika_scraper.schemas.meet import FullMeet
 from atletika_scraper.schemas.meet_event import MeetEvent as ScraperMeetEvent
+from fastapi import Depends
 from pydantic import UUID1
 from sqlalchemy import text
 from sqlalchemy.future import select
@@ -15,10 +17,16 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth import AuthData
 from app.core.exceptions import NotFoundError
+from app.core.notifications import get_notification_service
+from app.core.notifications.service import NotificationService
 from app.core.scraper import get_private_scraper, get_public_scraper
 from app.core.sse.broadcast import broadcast
 from app.core.sse.schemas import LocalActionEnum, SSEEvent
 from app.models import Athlete, AthleteMeetEvent, Discipline, Meet, MeetEvent, Trainer
+
+notification_service_dep = Annotated[
+    NotificationService, Depends(get_notification_service)
+]
 
 
 class MeetService:
@@ -219,6 +227,7 @@ class MeetService:
         self,
         db: AsyncSession,
         external_meet_id: str,
+        notification_service: notification_service_dep,
         type: str = "CAS",
     ) -> None:
         meet_results_data = self.public_scraper.get_athlete_results(
@@ -335,6 +344,9 @@ class MeetService:
                 athlete_meet_event: AthleteMeetEvent = (
                     athlete_meet_event_result.scalars().one_or_none()
                 )
+                previous_result = (
+                    athlete_meet_event.result if athlete_meet_event else None
+                )
                 if athlete_meet_event is None:
                     athlete_meet_event = AthleteMeetEvent(
                         athlete_id=athlete.id,
@@ -356,6 +368,21 @@ class MeetService:
                     athlete_meet_event.updated_at = datetime.now(timezone.utc)
                     athlete_meet_event.last_updated_by = "server"
                 db.add(athlete_meet_event)
+
+                # send notification if result changed from "" or None to something else
+                if (previous_result is None or previous_result == "") and (
+                    athlete_meet_event.result is not None
+                    and athlete_meet_event.result != ""
+                ):
+                    await notification_service.send_notification_to_all(
+                        title="Nový výsledek závodu",
+                        message=(
+                            f"{athlete.first_name} {athlete.last_name} - "
+                            f"{get_discipline_by_id(meet_event.discipline_id).short_description} - "
+                            f"{athlete_meet_event.result} {athlete_meet_event.wind if athlete_meet_event.wind else ''} "
+                            f"{athlete_meet_event.pb_sb if athlete_meet_event.pb_sb else ''} "
+                        ),
+                    )
         await db.commit()
         await self.notify_update("kurim", meet.id)
         return meet

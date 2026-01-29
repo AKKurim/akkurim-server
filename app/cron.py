@@ -10,7 +10,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.database import sa_db  # your context manager
 from app.core.logging import logger
-from app.core.notifications import notification_service
+from app.core.notifications import get_notification_service
 from app.core.sse import broadcast
 from app.features.meet.service import MeetService
 from app.models import Meet
@@ -37,6 +37,7 @@ async def check_meet_starts():
         )
         upcoming_meets = upcoming_meets_results.scalars().all()
         for meet in upcoming_meets:
+            notification_service = get_notification_service()
             await notification_service.send_notification_to_all(
                 title="Blíží se začátek závodu",
                 message=f"{meet.name} začíná za 24 hodin.",

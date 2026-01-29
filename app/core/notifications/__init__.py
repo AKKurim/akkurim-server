@@ -1,3 +1,3 @@
-from .service import notification_service
+from .service import get_notification_service
 
-__all__ = ["notification_service"]
+__all__ = ["get_notification_service"]
