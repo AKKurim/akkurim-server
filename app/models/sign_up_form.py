@@ -29,6 +29,8 @@ class SignUpForm(BaseModel, table=True):
     guardian_email2: str | None = Field(default=None)
     note: str | None = Field(default=None)
     status: str = Field(nullable=False)
-    school_year_id: UUID = Field(nullable=False)
+    school_year_id: UUID = Field(
+        nullable=False, foreign_key="school_year.id", index=True
+    )
     times_per_week: int = Field(nullable=False)
     days_in_week: str = Field(nullable=False)

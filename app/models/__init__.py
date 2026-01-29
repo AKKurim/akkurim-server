@@ -29,7 +29,7 @@ from .school_year import SchoolYear
 from .sign_up_form import SignUpForm
 from .sign_up_form_group import SignUpFormGroup
 from .trainer import Trainer
-from .training import Training
+from .training import Training, TrainingDashboardRead
 from .training_athlete import TrainingAthlete
 from .training_time import TrainingTime
 from .training_trainer import TrainingTrainer
@@ -68,6 +68,7 @@ __all__ = [
     "SignUpFormGroup",
     "Trainer",
     "Training",
+    "TrainingDashboardRead",
     "TrainingAthlete",
     "TrainingTime",
     "TrainingTrainer",

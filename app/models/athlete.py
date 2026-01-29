@@ -22,6 +22,8 @@ class Athlete(BaseModel, table=True):
     phone: str | None = Field(default=None)
     ean: str | None = Field(default=None)
     note: str | None = Field(default=None)
-    club_id: str | None = Field(default=None)
-    profile_image_id: UUID | None = Field(default=None)
+    club_id: str | None = Field(default=None, foreign_key="club.id", index=True)
+    profile_image_id: UUID | None = Field(
+        default=None, foreign_key="file.id", index=True
+    )
     status: str = Field(nullable=False)

@@ -10,6 +10,6 @@ from ._base_model import BaseModel
 class TrainingTrainer(BaseModel, table=True):
     __tablename__ = "training_trainer"
 
-    training_id: UUID = Field(primary_key=True)
-    trainer_id: UUID = Field(primary_key=True)
+    training_id: UUID = Field(primary_key=True, foreign_key="training.id", index=True)
+    trainer_id: UUID = Field(primary_key=True, foreign_key="trainer.id", index=True)
     presence: str | None = Field(default=None)

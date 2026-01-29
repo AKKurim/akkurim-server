@@ -1,5 +1,14 @@
 CATEGORIES = [
     {
+        "Id": 0,
+        "Sex": 0,
+        "Description": "prazdnáKategorie",
+        "ShortDescription": "prazdná",
+        "DescriptionEn": "emptyCategory",
+        "ShortDescriptionEn": "empty",
+        "Age": "<100",
+    },
+    {
         "Id": 10,
         "Sex": 1,
         "Description": "Muži",

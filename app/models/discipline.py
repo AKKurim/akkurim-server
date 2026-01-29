@@ -12,7 +12,9 @@ class Discipline(BaseModel, table=True):
 
     id: int = Field(primary_key=True)
     traditional: int | None = Field(default=None)
-    discipline_type_id: int = Field(nullable=False)
+    discipline_type_id: int = Field(
+        nullable=False, foreign_key="discipline_type.id", index=True
+    )
     description: str = Field(nullable=False)
     short_description: str = Field(nullable=False)
     description_en: str = Field(nullable=False)

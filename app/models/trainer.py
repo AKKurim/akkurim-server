@@ -11,7 +11,7 @@ class Trainer(BaseModel, table=True):
     __tablename__ = "trainer"
 
     id: UUID = Field(primary_key=True, index=True)
-    athlete_id: UUID = Field(nullable=False)
+    athlete_id: UUID = Field(nullable=False, foreign_key="athlete.id")
     bank_number: str | None = Field(default=None)
     status: str = Field(nullable=False)
     qualification: str = Field(nullable=False)

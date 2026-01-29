@@ -13,6 +13,10 @@ class Group(BaseModel, table=True):
     id: UUID = Field(primary_key=True, index=True)
     name: str = Field(nullable=False)
     description: str | None = Field(default=None)
-    training_time_id: UUID = Field(nullable=False)
-    school_year_id: UUID = Field(nullable=False)
+    training_time_id: UUID = Field(
+        nullable=False, foreign_key="training_time.id", index=True
+    )
+    school_year_id: UUID = Field(
+        nullable=False, foreign_key="school_year.id", index=True
+    )
     system: int | None = Field(default=None)

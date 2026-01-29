@@ -25,7 +25,7 @@ router = APIRouter(
     default_response_class=ORJSONResponse,
 )
 db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
-service_dep = Annotated[AthleteService, Depends(AthleteService)]
+athlete_service_dep = Annotated[AthleteService, Depends(AthleteService)]
 
 
 @router.post(
@@ -34,7 +34,7 @@ service_dep = Annotated[AthleteService, Depends(AthleteService)]
 async def sync_athletes_from_cas(
     auth_data: admin_dep,
     db: db_dep,
-    service: service_dep,
+    service: athlete_service_dep,
 ) -> List[Athlete]:
     athletes = await service.sync_athletes_from_cas(
         db,
@@ -51,7 +51,7 @@ async def get_athlete_by_id(
     athlete_id: UUID,
     auth_data: trainer_dep,
     db: db_dep,
-    service: service_dep,
+    service: athlete_service_dep,
 ) -> Athlete:
     athlete = await service.get_athlete_by_id(athlete_id, db)
     return athlete
@@ -64,7 +64,7 @@ async def get_athlete_by_id(
 async def get_athletes(
     auth_data: trainer_dep,
     db: db_dep,
-    service: service_dep,
+    service: athlete_service_dep,
 ) -> List[Athlete]:
     athletes = await service.get_all_athletes(db)
     return athletes
@@ -79,7 +79,7 @@ async def create_athlete(
     athlete: Athlete,
     auth_data: trainer_dep,
     db: db_dep,
-    service: service_dep,
+    service: athlete_service_dep,
 ) -> Athlete:
     created_athlete = await service.create_athlete(athlete, db)
     return created_athlete

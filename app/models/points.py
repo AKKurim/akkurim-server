@@ -13,4 +13,4 @@ class Points(BaseModel, table=True):
     type: str = Field(primary_key=True)
     source_id: UUID = Field(primary_key=True)
     amount: int = Field(nullable=False)
-    athlete_id: UUID = Field(primary_key=True)
+    athlete_id: UUID = Field(primary_key=True, foreign_key="athlete.id", index=True)
