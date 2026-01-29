@@ -24,19 +24,19 @@ from app.core.sse.broadcast import broadcast
 from app.core.sse.schemas import LocalActionEnum, SSEEvent
 from app.models import Athlete, AthleteMeetEvent, Discipline, Meet, MeetEvent, Trainer
 
-notification_service_dep = Annotated[
-    NotificationService, Depends(get_notification_service)
-]
-
 
 class MeetService:
-    def __init__(self):
+    def __init__(
+        self,
+        notification_service: NotificationService = Depends(get_notification_service),
+    ):
         self.private_scraper: PrivateCASScraper = get_private_scraper()
         self.public_scraper: PublicCASScraper = get_public_scraper()
         self.club_filter = "Kuřim"
         self.broadcast = broadcast
         self.broadcast_endpoint = "/meet"
         self.table = "meet"
+        self.notification_service = notification_service
 
     async def notify_update(self, tenant: str, id: UUID1) -> None:
         event = SSEEvent(
@@ -213,7 +213,7 @@ class MeetService:
                         id=str(uuid.uuid1()),
                         athlete_id=athlete.id,
                         meet_event_id=meet_event.id,
-                        bib=athlete_data.bib,
+                        bib=str(athlete_data.bib),
                         created_at=datetime.now(timezone.utc),
                         updated_at=datetime.now(timezone.utc),
                         last_updated_by="server",
@@ -227,7 +227,6 @@ class MeetService:
         self,
         db: AsyncSession,
         external_meet_id: str,
-        notification_service: notification_service_dep,
         type: str = "CAS",
     ) -> None:
         meet_results_data = self.public_scraper.get_athlete_results(
@@ -355,7 +354,7 @@ class MeetService:
                         wind=athlete_result.wind,
                         pb_sb=athlete_result.pb_sb,
                         points=parsed_points,
-                        bib=athlete_result.bib,
+                        bib=str(athlete_result.bib),
                         created_at=datetime.now(timezone.utc),
                         updated_at=datetime.now(timezone.utc),
                         last_updated_by="server",
@@ -374,12 +373,12 @@ class MeetService:
                     athlete_meet_event.result is not None
                     and athlete_meet_event.result != ""
                 ):
-                    await notification_service.send_notification_to_all(
+                    self.notification_service.send_notification_to_all(
                         title="Nový výsledek závodu",
                         message=(
                             f"{athlete.first_name} {athlete.last_name} - "
                             f"{get_discipline_by_id(meet_event.discipline_id).short_description} - "
-                            f"{athlete_meet_event.result} {athlete_meet_event.wind if athlete_meet_event.wind else ''} "
+                            f"{athlete_meet_event.result} {'(' + athlete_meet_event.wind + ')' if athlete_meet_event.wind else ''} "
                             f"{athlete_meet_event.pb_sb if athlete_meet_event.pb_sb else ''} "
                         ),
                     )

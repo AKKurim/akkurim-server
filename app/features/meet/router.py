@@ -115,5 +115,5 @@ async def sync_meet_results_from_cas(
     return await service.sync_meet_results_from_cas(
         db,
         external_meet_id,
-        type,
+        type=type,
     )
