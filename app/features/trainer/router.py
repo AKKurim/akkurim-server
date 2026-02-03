@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Annotated, Any, List
 from uuid import UUID
 
@@ -33,4 +34,20 @@ async def get_dashboard_schedule(
     auth_data: trainer_dep,
     service: trainer_service_dep,
 ):
-    return await service.get_dashboard_schedule(trainer_email=auth_data.email)
+    now = datetime.now()
+    end_date = now + timedelta(days=7)
+    return await service.get_trainings_by_range(
+        trainer_email=auth_data.email, start_date=now, end_date=end_date
+    )
+
+
+@router.get("/schedule/range", response_model=List[TrainingDashboardRead])
+async def get_schedule_range(
+    from_date: datetime,
+    to_date: datetime,
+    auth_data: trainer_dep,
+    service: trainer_service_dep,
+):
+    return await service.get_trainings_by_range(
+        trainer_email=auth_data.email, start_date=from_date, end_date=to_date
+    )

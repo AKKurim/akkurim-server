@@ -25,14 +25,15 @@ class TrainerService:
     def __init__(self, db: AsyncSession = Depends(get_tenant_db)):
         self.db: AsyncSession = db
 
-    async def get_dashboard_schedule(
-        self, trainer_email: str, days_ahead: int = 7
+    async def get_trainings_by_range(
+        self, trainer_email: str, start_date: datetime, end_date: datetime
     ) -> List[TrainingDashboardRead]:
 
         # Time Window Logic (Start of Today -> +7 Days)
         now = datetime.now()
-        start_of_today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end_date = now + timedelta(days=days_ahead)
+        start_of_start_date = datetime(
+            year=start_date.year, month=start_date.month, day=start_date.day
+        )
 
         statement = (
             select(
@@ -67,7 +68,7 @@ class TrainerService:
                     # Filter by the Email found on the Athlete/User entity
                     Athlete.email == trainer_email,
                     Training.deleted_at == None,
-                    Training.start_at >= start_of_today,
+                    Training.start_at >= start_of_start_date,
                     Training.start_at <= end_date,
                 )
             )
