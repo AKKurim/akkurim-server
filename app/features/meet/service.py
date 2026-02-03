@@ -213,7 +213,11 @@ class MeetService:
                         id=str(uuid.uuid1()),
                         athlete_id=athlete.id,
                         meet_event_id=meet_event.id,
-                        bib=str(athlete_data.bib),
+                        bib=(
+                            str(athlete_data.bib)
+                            if athlete_data.bib is not None
+                            else None
+                        ),
                         created_at=datetime.now(timezone.utc),
                         updated_at=datetime.now(timezone.utc),
                         last_updated_by="server",
@@ -354,7 +358,11 @@ class MeetService:
                         wind=athlete_result.wind,
                         pb_sb=athlete_result.pb_sb,
                         points=parsed_points,
-                        bib=str(athlete_result.bib),
+                        bib=(
+                            str(athlete_result.bib)
+                            if athlete_result.bib is not None
+                            else None
+                        ),
                         created_at=datetime.now(timezone.utc),
                         updated_at=datetime.now(timezone.utc),
                         last_updated_by="server",
