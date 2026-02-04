@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
+from uuid import UUID
 
 import sqlalchemy as sa
 from fastapi import Depends
@@ -18,6 +19,12 @@ from app.models import (
     Training,
     TrainingAthlete,
     TrainingDashboardRead,
+)
+from app.models.training_trainer import TrainingTrainer
+from app.schemas.attendance import (
+    AthleteAttendanceItem,
+    TrainerAttendanceItem,
+    TrainingAttendanceDetail,
 )
 
 
@@ -88,3 +95,143 @@ class TrainerService:
             )
 
         return schedule_data
+
+    async def get_attendance_detail(
+        self, training_id: UUID
+    ) -> TrainingAttendanceDetail:
+        # 1. FETCH TRAINING & GROUP
+        #    We need to select 'Training' into a variable so we can use .model_dump() later
+        query_training = (
+            select(Training, Group.name)
+            .join(Group, Group.id == Training.group_id)
+            .where(Training.id == training_id)
+        )
+        res_training = await self.db.exec(query_training)
+        row = res_training.first()
+
+        if not row:
+            # Handle 404 case (or return None and handle in router)
+            return None
+
+        # --- THIS DEFINES THE VARIABLE ---
+        training, group_name = row
+
+        # 2. ATHLETES: Fetch Status String directly
+        #    Join GroupAthlete to get everyone in the group.
+        #    Outer Join AthleteTraining to get their status if it exists.
+        query_athletes = (
+            select(
+                Athlete.id,
+                Athlete.first_name,
+                Athlete.last_name,
+                TrainingAthlete.presence,  # Fetch 'p', 'a', 'e', 'sick', or None
+            )
+            .join(GroupAthlete, GroupAthlete.athlete_id == Athlete.id)
+            .outerjoin(
+                TrainingAthlete,
+                and_(
+                    TrainingAthlete.athlete_id == Athlete.id,
+                    TrainingAthlete.training_id == training_id,
+                ),
+            )
+            .where(GroupAthlete.group_id == training.group_id)
+            .order_by(Athlete.last_name, Athlete.first_name)
+        )
+        res_athletes = await self.db.exec(query_athletes)
+        athletes = res_athletes.all()
+
+        # 3. TRAINERS: Fetch Trainer Attendance
+        #    Fetch trainers assigned to this group + their status for this specific training.
+        query_trainers = (
+            select(
+                Trainer.id,
+                Athlete.first_name,
+                Athlete.last_name,
+                TrainingTrainer.presence,
+            )
+            .join(GroupTrainer, GroupTrainer.trainer_id == Trainer.id)
+            # Assuming Trainer -> User link for names. Adjust if your Trainer model has name fields directly.
+            .join(Athlete, Athlete.id == Trainer.athlete_id)
+            .outerjoin(
+                TrainingTrainer,
+                and_(
+                    TrainingTrainer.trainer_id == Trainer.id,
+                    TrainingTrainer.training_id == training_id,
+                ),
+            )
+            .where(GroupTrainer.group_id == training.group_id)
+        )
+        res_trainers = await self.db.exec(query_trainers)
+        trainers = res_trainers.all()
+        print("Trainers Attendance Query Result:", trainers, flush=True)
+
+        # 4. CONSTRUCT RESPONSE
+        return TrainingAttendanceDetail(
+            **training.model_dump(),  # Now 'training' is safely defined from Step 1
+            group_name=group_name,
+            athletes=[
+                AthleteAttendanceItem(
+                    athlete_id=a_id,
+                    first_name=fname,
+                    last_name=lname,
+                    # If presence is None (no record), default to 'a' (Absent)
+                    # OR keep as None if you want the UI to show "Unmarked" state
+                    presence=presence,
+                )
+                for a_id, fname, lname, presence in athletes
+            ],
+            trainers=[
+                TrainerAttendanceItem(
+                    trainer_id=t_id,
+                    first_name=fname,
+                    last_name=lname,
+                    presence=presence,
+                )
+                for t_id, fname, lname, presence in trainers
+            ],
+        )
+
+    async def update_attendance(
+        self,
+        training_id: UUID,
+        description: str | None,
+        # Map of ID -> Status String
+        athlete_status: dict[UUID, str],
+        trainer_status: dict[UUID, str],
+    ):
+        # 1. Update Training Metadata
+        training = await self.db.get(Training, training_id)
+        if training:
+            training.description = description
+            training.attendance_taken_at = datetime.now(timezone.utc)
+            training.updated_at = datetime.now(timezone.utc)
+            self.db.add(training)
+
+        # 2. Update ATHLETES
+        #    Delete old, insert new (simpler than upsert for bulk)
+        await self.db.exec(
+            sa.delete(TrainingAthlete).where(TrainingAthlete.training_id == training_id)
+        )
+
+        for ath_id, status in athlete_status.items():
+            self.db.add(
+                TrainingAthlete(
+                    training_id=training_id,
+                    athlete_id=ath_id,
+                    presence=status,  # Store 'p', 'a', 'e', or 'flu'
+                )
+            )
+
+        # 3. Update TRAINERS
+        await self.db.exec(
+            sa.delete(TrainingTrainer).where(TrainingTrainer.training_id == training_id)
+        )
+
+        for tr_id, status in trainer_status.items():
+            self.db.add(
+                TrainingTrainer(
+                    training_id=training_id, trainer_id=tr_id, presence=status
+                )
+            )
+
+        await self.db.commit()

@@ -8,7 +8,8 @@ from fastapi.responses import ORJSONResponse
 from app.core.auth import admin_dep, trainer_dep
 from app.core.database import get_tenant_db
 from app.features.athlete.service import AthleteService
-from app.models import Athlete, TrainingDashboardRead
+from app.models import Athlete, BaseModel, TrainingDashboardRead
+from app.schemas.attendance import TrainingAttendanceDetail
 
 from .service import TrainerService
 
@@ -51,3 +52,35 @@ async def get_schedule_range(
     return await service.get_trainings_by_range(
         trainer_email=auth_data.email, start_date=from_date, end_date=to_date
     )
+
+
+# Define a small request body model for the update
+class AttendanceUpdateRequest(BaseModel):
+    description: str | None
+    athlete_status: dict[UUID, str | None]  # Mapping of athlete_id to presence status
+    trainer_status: dict[UUID, str | None]  # Mapping of trainer_id to presence status
+
+
+@router.get("/attendance/{training_id}", response_model=TrainingAttendanceDetail)
+async def get_attendance_detail(
+    training_id: UUID,
+    auth_data: trainer_dep,
+    service: trainer_service_dep,
+):
+    return await service.get_attendance_detail(training_id)
+
+
+@router.post("/attendance/{training_id}")
+async def submit_attendance(
+    training_id: UUID,
+    payload: AttendanceUpdateRequest,
+    auth_data: trainer_dep,
+    service: trainer_service_dep,
+):
+    await service.update_attendance(
+        training_id,
+        payload.description,
+        payload.athlete_status,
+        payload.trainer_status,
+    )
+    return {"status": "success"}
