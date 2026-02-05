@@ -21,6 +21,7 @@ from supertokens_python.recipe.session.framework.fastapi import verify_session
 from app.core.auth import auth_data_dep
 from app.core.database import get_tenant_db
 from app.models import Athlete, Guardian
+from app.models.trainer import Trainer
 
 from .schemas import ChangePasswordSchema
 
@@ -83,9 +84,10 @@ async def revoke_sessions(session: SessionContainer = Depends(verify_session()))
 async def read_me(
     auth_data: auth_data_dep,
     db: db_dep,
-):
+) -> dict[str, str]:
     res_dict = {
         "email": auth_data.email,
+        "trainer_id": None,
     }
     if "athlete" in auth_data.roles:
         # read email
@@ -97,6 +99,15 @@ async def read_me(
             res_dict["first_name"] = athlete.first_name
             res_dict["last_name"] = athlete.last_name
             res_dict["full_name"] = f"{athlete.first_name} {athlete.last_name}"
+
+            if "trainer" in auth_data.roles:
+                trainer_res = await db.exec(
+                    select(Trainer).where(Trainer.athlete_id == athlete.id)
+                )
+                trainer: Trainer | None = trainer_res.first()
+                if trainer:
+                    res_dict["trainer_id"] = str(trainer.id)
+
             return ORJSONResponse(res_dict, 200)
 
     if "guardian" in auth_data.roles:
