@@ -4,10 +4,12 @@ import logging
 from datetime import datetime, timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from atletika_scraper import PrivateCASScraper, PublicCASScraper
 from sqlalchemy import text
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.core.config import settings
 from app.core.database import sa_db  # your context manager
 from app.core.logging import logger
 from app.core.notifications import get_notification_service
@@ -27,7 +29,8 @@ async def check_meet_starts():
     async with async_session() as session:
         now = datetime.utcnow()
         # select meets starting in the next 24 hours
-        await session.execute(text("SET search_path TO " + tenant))
+        # quote tenant to match how it's set in request-time DB deps
+        await session.execute(text(f'SET search_path TO "{tenant}"'))
         upcoming_meets_results = await session.execute(
             select(Meet).where(
                 Meet.start_at
@@ -47,11 +50,12 @@ async def check_meet_starts():
 
 async def live_update_results():
     """Runs every 10 minutes during meets to update live results"""
-    print("Running live update for results...")
+    print("Running live update for results...", flush=True)
     async_session = sa_db.get_sessionmaker()
     async with async_session() as session:
         session: AsyncSession
-        await session.execute(text("SET search_path TO " + tenant))
+        # quote tenant to match runtime DB deps
+        await session.execute(text(f'SET search_path TO "{tenant}"'))
         now = datetime.utcnow()
         ongoing_meets_results = await session.execute(
             select(Meet).where(
@@ -65,12 +69,21 @@ async def live_update_results():
         if len(ongoing_meets) == 0:
             logger.info("No ongoing meets for live update.")
             return
+        # instantiate a MeetService and give it fresh scraper instances to
+        # avoid sharing scraper state across threads/tasks (can cause errors)
         meet_service = MeetService()
+        # create fresh scraper instances using configured credentials
+        meet_service.public_scraper = PublicCASScraper()
+        meet_service.private_scraper = PrivateCASScraper(
+            username=settings.IS_CAS_USERNAME,
+            password=settings.IS_CAS_PASSWORD,
+            club_id=settings.IS_CAS_CLUB_ID,
+        )
         for meet in ongoing_meets:
             meet: Meet
             await meet_service.sync_meet_results_from_cas(session, meet.external_id)
             logger.info(f"Updated live results for meet {meet.id}")
-    print("Live update completed.")
+    print("Live update completed.", flush=True)
 
 
 async def check_birthdays():
@@ -83,7 +96,7 @@ scheduler = AsyncIOScheduler()
 
 # Add jobs
 scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # every 15 minutes
-scheduler.add_job(live_update_results, "cron", minute="*/10")  # every 10 minutes
+scheduler.add_job(live_update_results, "cron", minute="*/1")  # every 10 minutes
 scheduler.add_job(check_birthdays, "cron", hour=9, minute=0)  # Run at 9:00 AM daily
 
 
