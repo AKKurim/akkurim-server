@@ -389,8 +389,7 @@ class MeetService:
                     and athlete_meet_event.result != ""
                 ):
                     notif_service = notif_service or self.notification_service
-                    notif_service.send_notification_to_user(
-                        user_id_email="tajovsky.matej@gmail.com",  # TODO send to all trainers following the meet
+                    notif_service.send_notification_to_all(
                         title="Nový výsledek závodu",
                         message=(
                             f"{athlete.first_name} {athlete.last_name} - "
