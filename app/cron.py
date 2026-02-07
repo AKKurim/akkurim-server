@@ -47,6 +47,7 @@ async def check_meet_starts():
 
 async def live_update_results():
     """Runs every 10 minutes during meets to update live results"""
+    print("Running live update for results...")
     async_session = sa_db.get_sessionmaker()
     async with async_session() as session:
         session: AsyncSession
@@ -69,6 +70,7 @@ async def live_update_results():
             meet: Meet
             await meet_service.sync_meet_results_from_cas(session, meet.external_id)
             logger.info(f"Updated live results for meet {meet.id}")
+    print("Live update completed.")
 
 
 async def check_birthdays():
