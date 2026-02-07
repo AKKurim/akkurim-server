@@ -232,6 +232,7 @@ class MeetService:
         db: AsyncSession,
         external_meet_id: str,
         type: str = "CAS",
+        notif_service: NotificationService | None = None,
     ) -> None:
         meet_results_data = self.public_scraper.get_athlete_results(
             external_meet_id,
@@ -382,7 +383,8 @@ class MeetService:
                     and athlete_meet_event.result is not None
                     and athlete_meet_event.result != ""
                 ):
-                    self.notification_service.send_notification_to_all(
+                    notif_service = notif_service or self.notification_service
+                    notif_service.send_notification_to_all(
                         title="Nový výsledek závodu",
                         message=(
                             f"{athlete.first_name} {athlete.last_name} - "
@@ -392,5 +394,6 @@ class MeetService:
                         ),
                     )
         await db.commit()
+        print("Live update completed from sync.", flush=True)
         await self.notify_update("kurim", meet.id)
         return meet

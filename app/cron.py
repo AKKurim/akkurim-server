@@ -1,7 +1,7 @@
 # app/cron.py
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from atletika_scraper import PrivateCASScraper, PublicCASScraper
@@ -10,7 +10,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.config import settings
-from app.core.database import sa_db  # your context manager
+from app.core.database import sa_db
 from app.core.logging import logger
 from app.core.notifications import get_notification_service
 from app.core.sse import broadcast
@@ -56,7 +56,7 @@ async def live_update_results():
         session: AsyncSession
         # quote tenant to match runtime DB deps
         await session.execute(text(f'SET search_path TO "{tenant}"'))
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         ongoing_meets_results = await session.execute(
             select(Meet).where(
                 Meet.start_at + timedelta(minutes=9) <= now,
@@ -81,7 +81,9 @@ async def live_update_results():
         )
         for meet in ongoing_meets:
             meet: Meet
-            await meet_service.sync_meet_results_from_cas(session, meet.external_id)
+            await meet_service.sync_meet_results_from_cas(
+                session, meet.external_id, notif_service=get_notification_service()
+            )
             logger.info(f"Updated live results for meet {meet.id}")
     print("Live update completed.", flush=True)
 
