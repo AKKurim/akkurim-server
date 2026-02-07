@@ -41,8 +41,7 @@ async def check_meet_starts():
         upcoming_meets = upcoming_meets_results.scalars().all()
         for meet in upcoming_meets:
             notification_service = get_notification_service()
-            await notification_service.send_notification_to_user(
-                "tajovsky.matej@gmail.com",
+            await notification_service.send_notification_to_all(
                 title="Blíží se začátek závodu",
                 message=f"{meet.name} začíná za 24 hodin.",
             )

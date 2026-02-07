@@ -375,6 +375,10 @@ class MeetService:
                     athlete_meet_event.points = parsed_points
                     athlete_meet_event.updated_at = datetime.now(timezone.utc)
                     athlete_meet_event.last_updated_by = "server"
+                print(
+                    f"Updating result for {athlete.first_name} {athlete.last_name} in {get_discipline_by_id(meet_event.discipline_id).short_description} to {athlete_meet_event.result}",
+                    flush=True,
+                )
                 db.add(athlete_meet_event)
 
                 # actually send notification if the value changed
@@ -384,7 +388,8 @@ class MeetService:
                     and athlete_meet_event.result != ""
                 ):
                     notif_service = notif_service or self.notification_service
-                    notif_service.send_notification_to_all(
+                    notif_service.send_notification_to_user(
+                        user_id_email="tajovsky.matej@gmail.com",  # TODO send to all trainers following the meet
                         title="Nový výsledek závodu",
                         message=(
                             f"{athlete.first_name} {athlete.last_name} - "
