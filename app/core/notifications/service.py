@@ -1,5 +1,7 @@
 import requests
 
+from app.core.config import settings
+
 from .config import notification_settings
 
 
@@ -28,6 +30,10 @@ class NotificationService:
         return response.status_code, response.reason, response.text
 
     def send_notification_to_all(self, title: str, message: str):
+        if settings.DEBUG:
+            self.send_notification_to_user("tajovsky.matej@gmail.com", title, message)
+            print("DEBUG mode: Sent notification to test user instead of all users.")
+            return
         payload = {
             "app_id": self.app_id,
             "priority": 10,
