@@ -377,7 +377,11 @@ class MeetService:
                 db.add(athlete_meet_event)
 
                 # actually send notification if the value changed
-                if previous_result != athlete_meet_event.result:
+                if (
+                    previous_result != athlete_meet_event.result
+                    and athlete_meet_event.result is not None
+                    and athlete_meet_event.result != ""
+                ):
                     self.notification_service.send_notification_to_all(
                         title="Nový výsledek závodu",
                         message=(
