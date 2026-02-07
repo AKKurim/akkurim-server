@@ -235,8 +235,8 @@ wheels = [
 
 [[package]]
 name = "atletika-scraper"
-version = "0.1.2"
-source = { git = "https://github.com/czmatejt/python-atletika-scraper.git#847daea18bf1902cf90072b69e79ae97acb68543" }
+version = "0.1.3"
+source = { git = "https://github.com/czmatejt/python-atletika-scraper.git#eb375107c63bf195bd632d535d3fa1b9a20c014e" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "fpdf2" },

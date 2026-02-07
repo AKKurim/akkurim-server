@@ -267,7 +267,8 @@ class MeetService:
                         (MeetEvent.meet_id == meet.id)
                         & (MeetEvent.discipline_id == athlete_result.discipline_id)
                         & (MeetEvent.category_id == athlete_result.category_id)
-                        & (not MeetEvent.phase.__contains__(finale_text))
+                        # the phase does not include "Finále" text, because sometimes CAS changes the phase name from "Finále" to "Finále A" for example, which causes issues with matching the event
+                        & (~MeetEvent.phase.contains(finale_text))
                     )
                 )
                 meet_event = meet_event_result.scalars().one_or_none()
