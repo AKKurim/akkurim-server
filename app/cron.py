@@ -96,7 +96,7 @@ scheduler = AsyncIOScheduler()
 
 # Add jobs
 scheduler.add_job(check_meet_starts, "cron", minute="*/15")  # every 15 minutes
-scheduler.add_job(live_update_results, "cron", minute="*/1")  # every 10 minutes
+scheduler.add_job(live_update_results, "cron", minute="*/10")  # every 10 minutes
 scheduler.add_job(check_birthdays, "cron", hour=9, minute=0)  # Run at 9:00 AM daily
 
 
