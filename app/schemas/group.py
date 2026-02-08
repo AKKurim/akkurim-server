@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from pydantic import BaseModel
+
 from app.models.group import GroupBase
 
 
@@ -8,13 +10,13 @@ class GroupCreateUpdate(GroupBase):
     athlete_ids: list[UUID]
 
 
-class PersonSimple:
+class PersonSimple(BaseModel):
     id: UUID
     first_name: str
     last_name: str
 
 
-class GroupReadDetail(GroupBase):
+class GroupDetailRead(GroupBase):
     id: UUID
     trainers: list[PersonSimple]
     athletes: list[PersonSimple]

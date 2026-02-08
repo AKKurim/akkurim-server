@@ -22,6 +22,7 @@ from app.core.sse import broadcast
 from app.core.sse import router as sse_router
 from app.core.sync import router as sync_router
 from app.features.athlete import router as athlete_router
+from app.features.group import router as group_router
 from app.features.meet import router as meet_router
 from app.features.trainer import router as trainer_router
 from app.features.user import router as user_router
@@ -71,6 +72,7 @@ app.include_router(athlete_router, prefix=settings.API_V1_PREFIX)
 app.include_router(meet_router, prefix=settings.API_V1_PREFIX)
 app.include_router(trainer_router, prefix=settings.API_V1_PREFIX)
 app.include_router(user_router, prefix="")  # user router has its own prefix
+app.include_router(group_router, prefix=settings.API_V1_PREFIX)
 
 
 @app.get(

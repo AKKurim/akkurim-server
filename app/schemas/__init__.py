@@ -3,7 +3,7 @@ from .attendance import (
     TrainerAttendanceItem,
     TrainingAttendanceDetail,
 )
-from .group import GroupCreateUpdate, GroupReadDetail, PersonSimple
+from .group import GroupCreateUpdate, GroupDetailRead, PersonSimple
 from .training import TrainingDashboardRead
 
 __all__ = [
@@ -12,6 +12,6 @@ __all__ = [
     "TrainerAttendanceItem",
     "TrainingAttendanceDetail",
     "GroupCreateUpdate",
-    "GroupReadDetail",
+    "GroupDetailRead",
     "PersonSimple",
 ]
