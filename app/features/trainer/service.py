@@ -18,9 +18,9 @@ from app.models import (
     Trainer,
     Training,
     TrainingAthlete,
-    TrainingDashboardRead,
 )
 from app.models.training_trainer import TrainingTrainer
+from app.schemas import TrainingDashboardRead
 from app.schemas.attendance import (
     AthleteAttendanceItem,
     TrainerAttendanceItem,

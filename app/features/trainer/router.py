@@ -7,8 +7,8 @@ from fastapi.responses import ORJSONResponse
 
 from app.core.auth import admin_dep, trainer_dep
 from app.core.database import get_tenant_db
-from app.features.athlete.service import AthleteService
-from app.models import Athlete, BaseModel, TrainingDashboardRead
+from app.models import BaseModel
+from app.schemas import TrainingDashboardRead
 from app.schemas.attendance import TrainingAttendanceDetail
 
 from .service import TrainerService
@@ -26,7 +26,6 @@ router = APIRouter(
     },
     default_response_class=ORJSONResponse,
 )
-# db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 trainer_service_dep = Annotated[TrainerService, Depends(TrainerService)]
 
 

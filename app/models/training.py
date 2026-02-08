@@ -30,9 +30,3 @@ class Training(BaseModel, TrainingBase, table=True):
     __tablename__ = "training"
 
     id: UUID = Field(primary_key=True, index=True)
-
-
-class TrainingDashboardRead(TrainingBase):
-    id: UUID
-    group_name: str
-    attendee_count: int

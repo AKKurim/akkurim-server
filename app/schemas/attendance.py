@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from app.models.training import TrainingBase  # Import your base model
+from app.models.training import TrainingBase
 
 
 class AthleteAttendanceItem(BaseModel):

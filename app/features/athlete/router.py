@@ -1,12 +1,10 @@
-from typing import Annotated, Any, List
+from typing import Annotated, List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import ORJSONResponse
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth import admin_dep, trainer_dep
-from app.core.database import get_tenant_db
 from app.models import Athlete
 
 from .service import AthleteService
@@ -24,7 +22,6 @@ router = APIRouter(
     },
     default_response_class=ORJSONResponse,
 )
-db_dep = Annotated[AsyncSession, Depends(get_tenant_db)]
 athlete_service_dep = Annotated[AthleteService, Depends(AthleteService)]
 
 
