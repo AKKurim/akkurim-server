@@ -3,10 +3,12 @@ from datetime import datetime, timezone
 from typing import List
 
 from atletika_scraper import PrivateCASScraper
+from fastapi.params import Depends
 from sqlalchemy.future import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.auth import AuthData
+from app.core.database.dependecies import get_tenant_db
 from app.core.exceptions import AlreadyExistsError, NotFoundError
 from app.core.scraper import get_private_scraper
 from app.models import Athlete, AthleteGuardian, File, Guardian, Trainer
@@ -15,15 +17,15 @@ from .config import athlete_settings
 
 
 class AthleteService:
-    def __init__(self):
+    def __init__(self, db: AsyncSession = Depends(get_tenant_db)):
+        self.db: AsyncSession = db
         self.scraper: PrivateCASScraper = get_private_scraper()
 
     async def get_athlete_by_id(
         self,
         athlete_id: str,
-        db: AsyncSession,
     ) -> Athlete:
-        result = await db.get(Athlete, athlete_id)
+        result = await self.db.get(Athlete, athlete_id)
         if result is None:
             raise NotFoundError(athlete_id, "Athlete not found")
         return result
@@ -31,18 +33,16 @@ class AthleteService:
     async def _get_athlete_by_ean(
         self,
         ean: str,
-        db: AsyncSession,
     ) -> Athlete | None:
-        result = await db.execute(select(Athlete).where(Athlete.ean == ean))
+        result = await self.db.execute(select(Athlete).where(Athlete.ean == ean))
         athlete = result.scalars().one_or_none()
         return athlete
 
     async def _get_trainer_by_athlete_id(
         self,
         athlete_id: str,
-        db: AsyncSession,
     ) -> Trainer | None:
-        result = await db.execute(
+        result = await self.db.execute(
             select(Trainer).where(Trainer.athlete_id == athlete_id)
         )
         trainer = result.scalars().one_or_none()
@@ -51,7 +51,6 @@ class AthleteService:
     # admin function to sync athletes from CAS
     async def sync_athletes_from_cas(
         self,
-        db: AsyncSession,
         auth_data: AuthData,
     ) -> List[Athlete]:
         data = self.scraper._get_all_members_data()
@@ -66,7 +65,6 @@ class AthleteService:
             # athletes
             athlete = await self._get_athlete_by_ean(
                 str(a_data["Ean"]),
-                db,
             )
             if athlete is None:
                 athlete = Athlete(
@@ -98,13 +96,12 @@ class AthleteService:
                 athlete.zip = a_data["AdresaPsc"]
                 athlete.email = a_data["Email"]
                 athlete.phone = a_data["Telefon"]
-            db.add(athlete)
+            self.db.add(athlete)
 
             # trainers
             if a_data["TrenerTrida"] != 0:
                 trainer = await self._get_trainer_by_athlete_id(
                     athlete.id,
-                    db,
                 )
                 if trainer is None:
                     trainer = Trainer(
@@ -129,14 +126,14 @@ class AthleteService:
                             "Neznámá kvalifikace",
                         )
                     )
-                db.add(trainer)
+                self.db.add(trainer)
 
             # guardians
             if (
                 a_data["EmailZastupce"] is not None
                 or a_data["TelefonZastupce"] is not None
             ):
-                result = await db.execute(
+                result = await self.db.execute(
                     select(Guardian).where((Guardian.email == a_data["EmailZastupce"]))
                 )
                 guardian = result.scalars().one_or_none()
@@ -151,11 +148,11 @@ class AthleteService:
                         email=a_data["EmailZastupce"],
                         phone=a_data["TelefonZastupce"],
                     )
-                    db.add(guardian)
-                    await db.flush()  # to get guardian.id
+                    self.db.add(guardian)
+                    await self.db.flush()  # to get guardian.id
 
                 # link athlete and guardian
-                result = await db.execute(
+                result = await self.db.execute(
                     select(AthleteGuardian).where(
                         (AthleteGuardian.athlete_id == athlete.id)
                         & (AthleteGuardian.guardian_id == guardian.id)
@@ -170,44 +167,43 @@ class AthleteService:
                         athlete_id=athlete.id,
                         guardian_id=guardian.id,
                     )
-                    db.add(athlete_guardian)
+                    self.db.add(athlete_guardian)
 
-        await db.commit()
-        athletes = await self.get_all_athletes(db)
+        await self.db.commit()
+        athletes = await self.get_all_athletes()
         return athletes
 
         # todo sync also guardians and trainers
 
     async def get_all_athletes(
         self,
-        db: AsyncSession,
     ) -> List[Athlete]:
-        result = await db.execute(select(Athlete).where(Athlete.deleted_at == None))
+        result = await self.db.execute(
+            select(Athlete).where(Athlete.deleted_at == None)
+        )
         athletes = result.scalars().all()
         return athletes
 
     async def create_athlete(
         self,
         athlete: Athlete,
-        db: AsyncSession,
     ) -> Athlete:
         try:
-            db.add(athlete)
-            await db.commit()
-            await db.refresh(athlete)
+            self.db.add(athlete)
+            await self.db.commit()
+            await self.db.refresh(athlete)
             return athlete
         # if the athlete already exists return
         except Exception as e:
-            await db.rollback()
+            await self.db.rollback()
             raise e
 
     async def delete_athlete(
         self,
         athlete_id: str,
-        db: AsyncSession,
     ) -> None:
-        athlete = await self.get_athlete_by_id(athlete_id, db)
+        athlete = await self.get_athlete_by_id(athlete_id)
         # set deleted_at timestamp
         athlete.deleted_at = datetime.now(timezone.utc)
-        db.add(athlete)
-        await db.commit()
+        self.db.add(athlete)
+        await self.db.commit()

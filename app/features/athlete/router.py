@@ -33,11 +33,9 @@ athlete_service_dep = Annotated[AthleteService, Depends(AthleteService)]
 )
 async def sync_athletes_from_cas(
     auth_data: admin_dep,
-    db: db_dep,
     service: athlete_service_dep,
 ) -> List[Athlete]:
     athletes = await service.sync_athletes_from_cas(
-        db,
         auth_data,
     )
     return athletes
@@ -50,10 +48,9 @@ async def sync_athletes_from_cas(
 async def get_athlete_by_id(
     athlete_id: UUID,
     auth_data: trainer_dep,
-    db: db_dep,
     service: athlete_service_dep,
 ) -> Athlete:
-    athlete = await service.get_athlete_by_id(athlete_id, db)
+    athlete = await service.get_athlete_by_id(athlete_id)
     return athlete
 
 
@@ -63,10 +60,9 @@ async def get_athlete_by_id(
 )
 async def get_athletes(
     auth_data: trainer_dep,
-    db: db_dep,
     service: athlete_service_dep,
 ) -> List[Athlete]:
-    athletes = await service.get_all_athletes(db)
+    athletes = await service.get_all_athletes()
     return athletes
 
 
@@ -78,8 +74,7 @@ async def get_athletes(
 async def create_athlete(
     athlete: Athlete,
     auth_data: trainer_dep,
-    db: db_dep,
     service: athlete_service_dep,
 ) -> Athlete:
-    created_athlete = await service.create_athlete(athlete, db)
+    created_athlete = await service.create_athlete(athlete)
     return created_athlete
