@@ -31,7 +31,8 @@ from .sign_up_form_group import SignUpFormGroup
 from .trainer import Trainer
 from .training import Training, TrainingDashboardRead
 from .training_athlete import TrainingAthlete
-from .training_time import TrainingTime
+
+# from .training_time import TrainingTime
 from .training_trainer import TrainingTrainer
 from .web_post import WebPost
 
@@ -70,7 +71,7 @@ __all__ = [
     "Training",
     "TrainingDashboardRead",
     "TrainingAthlete",
-    "TrainingTime",
+    # "TrainingTime",
     "TrainingTrainer",
     "WebPost",
 ]
@@ -109,7 +110,7 @@ models_by_table_name = {
     "item": Item,
     "sign_up_form": SignUpForm,
     "athlete_sign_up_form": AthleteSignUpForm,
-    "training_time": TrainingTime,
+    # "training_time": TrainingTime,
     "file": File,
     "item_type": ItemType,
 }
