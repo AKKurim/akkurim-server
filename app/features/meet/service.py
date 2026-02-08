@@ -223,7 +223,7 @@ class MeetService:
                         last_updated_by="server",
                     )
                     db.add(athlete_meet_event)
-        await db.commit()
+        await db.flush()
         await self.notify_update("kurim", meet.id)
         return meet
 
@@ -398,7 +398,7 @@ class MeetService:
                             f"{athlete_meet_event.pb_sb if athlete_meet_event.pb_sb else ''} "
                         ),
                     )
-        await db.commit()
+        await db.flush()
         print("Live update completed from sync.", flush=True)
         await self.notify_update("kurim", meet.id)
         return meet

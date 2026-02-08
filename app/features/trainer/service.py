@@ -234,4 +234,4 @@ class TrainerService:
                 )
             )
 
-        await self.db.commit()
+        await self.db.flush()

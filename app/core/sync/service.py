@@ -114,6 +114,6 @@ class SyncService:
             logger.info(query)
             sql, params = self._convert_query_and_params(query, values)
             await db.exec(text(sql), params=params)
-            await db.commit()
+            await db.flush()
 
         return None

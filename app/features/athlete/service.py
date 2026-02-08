@@ -169,7 +169,7 @@ class AthleteService:
                     )
                     self.db.add(athlete_guardian)
 
-        await self.db.commit()
+        await self.db.flush()
         athletes = await self.get_all_athletes()
         return athletes
 
@@ -188,15 +188,9 @@ class AthleteService:
         self,
         athlete: Athlete,
     ) -> Athlete:
-        try:
-            self.db.add(athlete)
-            await self.db.commit()
-            await self.db.refresh(athlete)
-            return athlete
-        # if the athlete already exists return
-        except Exception as e:
-            await self.db.rollback()
-            raise e
+        self.db.add(athlete)
+        await self.db.flush()
+        return athlete
 
     async def delete_athlete(
         self,
@@ -206,4 +200,4 @@ class AthleteService:
         # set deleted_at timestamp
         athlete.deleted_at = datetime.now(timezone.utc)
         self.db.add(athlete)
-        await self.db.commit()
+        await self.db.flush()

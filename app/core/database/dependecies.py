@@ -71,5 +71,11 @@ async def get_tenant_db(
 ) -> AsyncGenerator[AsyncSession, None]:
     async_session = sa_db.get_sessionmaker()
     async with async_session() as session:
-        await session.execute(text(f'SET search_path TO "{auth_data.tenant_id}"'))
-        yield session
+        # Begin a transaction and set the search_path locally for its duration.
+        # Using SET LOCAL ensures the search_path applies to this connection
+        # for the duration of the transaction and won't leak between requests.
+        async with session.begin():
+            await session.execute(
+                text(f'SET LOCAL search_path TO "{auth_data.tenant_id}"')
+            )
+            yield session
