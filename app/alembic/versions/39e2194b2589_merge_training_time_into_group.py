@@ -39,7 +39,7 @@ def upgrade() -> None:
             summer_time = tt.summer_time,
             winter_time = tt.winter_time,
             duration_summer = tt.duration_summer,
-            duration_winter = tt.duration_winter
+            duration_winter = tt.duration_winter,
             updated_at = now()
         FROM training_time tt
         WHERE "group".training_time_id = tt.id
